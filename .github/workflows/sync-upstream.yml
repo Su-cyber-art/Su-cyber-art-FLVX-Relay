@@ -6,9 +6,13 @@ on:
   workflow_dispatch:
     inputs:
       create_release:
-        description: 'Auto-create a release tag after sync'
+        description: 'Create a release tag after sync'
         type: boolean
         default: false
+      custom_tag:
+        description: 'Custom tag name (e.g. 2.1.7-mybuild). Empty = auto from upstream.'
+        type: string
+        default: ''
 
 jobs:
   sync:
@@ -81,12 +85,16 @@ jobs:
 
       - name: Create release tag
         if: >-
-          steps.check.outputs.new_commits != '0' &&
           github.event_name == 'workflow_dispatch' &&
           github.event.inputs.create_release == 'true'
         run: |
-          UPSTREAM_TAG=$(git describe --tags upstream/main --abbrev=0 2>/dev/null || echo "0.0.0")
-          TAG="${UPSTREAM_TAG}-custom"
+          CUSTOM="${{ github.event.inputs.custom_tag }}"
+          if [ -n "$CUSTOM" ]; then
+            TAG="$CUSTOM"
+          else
+            UPSTREAM_TAG=$(git describe --tags upstream/main --abbrev=0 2>/dev/null || echo "0.0.0")
+            TAG="${UPSTREAM_TAG}-custom"
+          fi
           echo "🏷️ Creating tag: $TAG"
           git tag "$TAG"
           git push origin "$TAG"

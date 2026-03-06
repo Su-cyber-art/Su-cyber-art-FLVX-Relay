@@ -1087,7 +1087,7 @@ export default function NodePage() {
             {selectMode ? (
               <>
                 <span className="text-sm text-default-600 shrink-0">
-                  已选 {selectedIds.size} 项
+                  已选择 {selectedIds.size} 项
                 </span>
                 <Button
                   isIconOnly
@@ -1134,7 +1134,7 @@ export default function NodePage() {
                 </Button>
                 <Button
                   isIconOnly
-                  color="secondary"
+                  color="default"
                   size="sm"
                   title="退出"
                   variant="solid"
@@ -1147,10 +1147,10 @@ export default function NodePage() {
               <>
                 <Button
                   isIconOnly
-                  className="bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:hover:bg-sky-900/45"
+                  className="bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/45"
                   color="default"
                   size="sm"
-                  title="批量"
+                  title="选择"
                   variant="flat"
                   onPress={toggleSelectMode}
                 >

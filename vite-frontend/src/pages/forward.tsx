@@ -3706,7 +3706,8 @@ export default function ForwardPage() {
                 </Button>
                 <Button
                   isIconOnly
-                  color="primary"
+                  className="bg-cyan-100 text-cyan-700 hover:bg-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:hover:bg-cyan-900/45"
+                  color="default"
                   isDisabled={selectedIds.size === 0}
                   isLoading={batchLoading}
                   size="sm"
@@ -3718,10 +3719,11 @@ export default function ForwardPage() {
                 </Button>
                 <Button
                   isIconOnly
-                  color="secondary"
+                  className="bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/45"
+                  color="default"
                   isDisabled={selectedIds.size === 0}
                   size="sm"
-                  title="隧道"
+                  title="更换隧道"
                   variant="flat"
                   onPress={() => setBatchChangeTunnelModalOpen(true)}
                 >
@@ -3729,7 +3731,7 @@ export default function ForwardPage() {
                 </Button>
                 <Button
                   isIconOnly
-                  color="secondary"
+                  color="default"
                   size="sm"
                   title="退出"
                   variant="solid"
@@ -3813,10 +3815,10 @@ export default function ForwardPage() {
 
                 <Button
                   isIconOnly
-                  className="bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:hover:bg-sky-900/45"
+                  className="bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/45"
                   color="default"
                   size="sm"
-                  title="批量"
+                  title="选择"
                   variant="flat"
                   onPress={toggleSelectMode}
                 >
@@ -5586,7 +5588,7 @@ export default function ForwardPage() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>隧道</ModalHeader>
+              <ModalHeader>更换隧道</ModalHeader>
               <ModalBody>
                 <p className="mb-4">
                   将选中的 {selectedIds.size} 项规则迁移到新隧道：

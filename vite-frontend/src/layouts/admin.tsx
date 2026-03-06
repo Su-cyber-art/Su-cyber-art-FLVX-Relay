@@ -25,6 +25,12 @@ import { safeLogout } from "@/utils/logout";
 import { siteConfig } from "@/config/site";
 import { useMobileBreakpoint } from "@/hooks/useMobileBreakpoint";
 import { getAdminFlag, getSessionName } from "@/utils/session";
+import {
+  getLatestVersionByChannel,
+  getUpdateReleaseChannel,
+  hasVersionUpdate,
+  UPDATE_CHANNEL_CHANGED_EVENT,
+} from "@/utils/version-update";
 
 interface MenuItem {
   path: string;
@@ -55,6 +61,7 @@ export default function AdminLayout({
   );
   const [username, setUsername] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hasVersionUpdateHint, setHasVersionUpdateHint] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordForm, setPasswordForm] = useState<PasswordForm>({
     newUsername: "",
@@ -181,6 +188,43 @@ export default function AdminLayout({
       setMobileMenuVisible(false);
     }
   }, [isMobile]);
+
+  useEffect(() => {
+    let active = true;
+
+    const checkVersionUpdate = async () => {
+      try {
+        const channel = getUpdateReleaseChannel();
+        const latest = await getLatestVersionByChannel(
+          channel,
+          siteConfig.github_repo,
+        );
+
+        if (!active) {
+          return;
+        }
+
+        setHasVersionUpdateHint(
+          Boolean(latest && hasVersionUpdate(siteConfig.version, latest)),
+        );
+      } catch {
+        if (active) {
+          setHasVersionUpdateHint(false);
+        }
+      }
+    };
+
+    void checkVersionUpdate();
+    window.addEventListener(UPDATE_CHANNEL_CHANGED_EVENT, checkVersionUpdate);
+
+    return () => {
+      active = false;
+      window.removeEventListener(
+        UPDATE_CHANNEL_CHANGED_EVENT,
+        checkVersionUpdate,
+      );
+    };
+  }, []);
 
   // 退出登录
   const handleLogout = () => {
@@ -398,7 +442,7 @@ export default function AdminLayout({
         >
           <a
             aria-label="GitHub 仓库"
-            className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors duration-200"
+            className="relative flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors duration-200"
             href="https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay"
             rel="noreferrer"
             target="_blank"
@@ -407,6 +451,9 @@ export default function AdminLayout({
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.29 9.43 7.86 10.96.57.1.78-.24.78-.54 0-.27-.01-.98-.02-1.92-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.95.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.19-3.09-.12-.3-.52-1.5.11-3.13 0 0 .97-.31 3.18 1.18a11.08 11.08 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.64 1.63.24 2.83.12 3.13.74.8 1.19 1.83 1.19 3.09 0 4.43-2.69 5.4-5.25 5.68.41.36.78 1.07.78 2.16 0 1.56-.01 2.82-.01 3.2 0 .3.2.65.79.54A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z" />
             </svg>
+            {hasVersionUpdateHint && (
+              <span className="absolute right-1.5 top-1.5 inline-block h-2 w-2 rounded-full bg-red-500" />
+            )}
           </a>
 
           {/* 桌面端折叠按钮 */}

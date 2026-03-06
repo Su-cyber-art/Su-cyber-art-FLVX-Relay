@@ -8,6 +8,12 @@ import { useScrollTopOnPathChange } from "@/hooks/useScrollTopOnPathChange";
 import { safeLogout } from "@/utils/logout";
 import { getAdminFlag } from "@/utils/session";
 import { isWebViewFunc } from "@/utils/panel";
+import {
+  getLatestVersionByChannel,
+  getUpdateReleaseChannel,
+  hasVersionUpdate,
+  UPDATE_CHANNEL_CHANGED_EVENT,
+} from "@/utils/version-update";
 
 interface TabItem {
   path: string;
@@ -20,6 +26,10 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hasVersionUpdateHint, setHasVersionUpdateHint] = useState(false);
+  const currentVersion = isWebViewFunc()
+    ? siteConfig.app_version
+    : siteConfig.version;
 
   useScrollTopOnPathChange();
 
@@ -90,6 +100,43 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
     setIsAdmin(getAdminFlag());
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    const checkVersionUpdate = async () => {
+      try {
+        const channel = getUpdateReleaseChannel();
+        const latest = await getLatestVersionByChannel(
+          channel,
+          siteConfig.github_repo,
+        );
+
+        if (!active) {
+          return;
+        }
+
+        setHasVersionUpdateHint(
+          Boolean(latest && hasVersionUpdate(currentVersion, latest)),
+        );
+      } catch {
+        if (active) {
+          setHasVersionUpdateHint(false);
+        }
+      }
+    };
+
+    void checkVersionUpdate();
+    window.addEventListener(UPDATE_CHANNEL_CHANGED_EVENT, checkVersionUpdate);
+
+    return () => {
+      active = false;
+      window.removeEventListener(
+        UPDATE_CHANNEL_CHANGED_EVENT,
+        checkVersionUpdate,
+      );
+    };
+  }, [currentVersion]);
+
   // Tab点击处理
   const handleTabClick = (path: string) => {
     navigate(path);
@@ -120,8 +167,11 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
             <h1 className="text-sm font-bold text-foreground">
               {siteConfig.name}
             </h1>
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              {isWebViewFunc() ? siteConfig.app_version : siteConfig.version}
+            <span className="relative text-xs text-gray-400 dark:text-gray-500">
+              {currentVersion}
+              {hasVersionUpdateHint && (
+                <span className="absolute -right-2 -top-1 inline-block h-2 w-2 rounded-full bg-red-500" />
+              )}
             </span>
           </div>
         </div>

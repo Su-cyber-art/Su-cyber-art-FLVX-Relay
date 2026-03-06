@@ -193,37 +193,61 @@ export default function ProfilePage() {
         {/* 用户信息卡片 */}
         <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
           <CardBody className="p-4">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+            <div className="relative">
+              <Button
+                isIconOnly
+                className="absolute right-0 top-0"
+                color="default"
+                size="sm"
+                title="修改密码"
+                variant="flat"
+                onPress={onOpen}
+              >
                 <svg
-                  className="w-6 h-6 text-primary"
+                  className="w-5 h-5"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
                   <path
                     clipRule="evenodd"
-                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
                     fillRule="evenodd"
                   />
                 </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-base font-medium text-foreground">
-                  {username}
-                </h3>
-                <div className="flex items-center space-x-2 mt-1">
-                  <span
-                    className={`px-2 py-1 rounded-md text-xs font-medium ${
-                      isAdmin
-                        ? "bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300"
-                        : "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300"
-                    }`}
+              </Button>
+
+              <div className="flex items-center space-x-4 pr-12">
+                <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-primary"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
                   >
-                    {isAdmin ? "管理员" : "普通用户"}
-                  </span>
-                  <span className="text-xs text-default-500">
-                    {new Date().toLocaleDateString("zh-CN")}
-                  </span>
+                    <path
+                      clipRule="evenodd"
+                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                      fillRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-medium text-foreground">
+                    {username}
+                  </h3>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <span
+                      className={`px-2 py-1 rounded-md text-xs font-medium ${
+                        isAdmin
+                          ? "bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300"
+                          : "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300"
+                      }`}
+                    >
+                      {isAdmin ? "管理员" : "普通用户"}
+                    </span>
+                    <span className="text-xs text-default-500">
+                      {new Date().toLocaleDateString("zh-CN")}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -253,28 +277,6 @@ export default function ProfilePage() {
                   </button>
                 ))}
 
-              {/* 修改密码 */}
-              <button
-                className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
-                onClick={onOpen}
-              >
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      clipRule="evenodd"
-                      d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                      fillRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <span className="text-xs text-foreground text-center">
-                  修改密码
-                </span>
-              </button>
 
             </div>
           </CardBody>

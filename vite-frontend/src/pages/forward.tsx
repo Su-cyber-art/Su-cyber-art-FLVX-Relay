@@ -114,16 +114,6 @@ import {
   ViewListIcon,
   ViewSplitIcon,
 } from "@/components/icons";
-import {
-  GripVertical,
-  Pencil,
-  Activity,
-  Trash2,
-  ChevronDown,
-  Copy,
-  RefreshCw,
-  Layers,
-} from "lucide-react";
 
 interface Forward {
   id: number;

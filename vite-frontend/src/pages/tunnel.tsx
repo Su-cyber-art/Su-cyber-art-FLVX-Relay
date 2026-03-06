@@ -63,7 +63,7 @@ import {
 import { useLocalStorageState } from "@/hooks/use-local-storage-state";
 import { loadStoredOrder, saveOrder } from "@/utils/order-storage";
 import { extractApiErrorMessage } from "@/api/error-message";
-import { PlusIcon, DeleteIcon, CheckAllIcon, XCircleIcon, ListCheckIcon, XIcon, SendIcon } from "@/components/icons";
+import { PlusIcon, DeleteIcon, CheckAllIcon, XCircleIcon, ListCheckIcon, SendIcon } from "@/components/icons";
 import {
   GripVertical,
   LogIn,
@@ -72,7 +72,6 @@ import {
   LogOut,
   Activity,
   Trash2,
-  Inbox,
   CircleX,
   Pencil,
 } from "lucide-react";

@@ -132,7 +132,7 @@ export default function UserPage() {
     "",
   );
   const [isSearchVisible, setIsSearchVisible] = useState(false);
-  const [pagination, setPagination] = useState<PaginationType>({
+  const [pagination] = useState<PaginationType>({
     current: 1,
     size: 10,
     total: 0,

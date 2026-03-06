@@ -414,25 +414,27 @@ export default function PanelSharingPage() {
         >
           <Card>
             <CardBody className="space-y-5">
-              <div className="mt-4 flex flex-col gap-4 rounded-lg border border-divider bg-default-50/60 dark:bg-default-100/20 p-4 md:flex-row md:items-center md:justify-between">
-                <div className="space-y-1">
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Provider 共享
-                  </h2>
-                  <p className="text-sm text-default-500">
-                    将本地节点分享给其他面板，统一管理
-                    Token、端口范围和到期策略。
-                  </p>
+              <div className="mt-4 rounded-lg border border-divider bg-default-50/60 dark:bg-default-100/20 p-4">
+                <div className="space-y-4 text-center">
+                  <div className="space-y-1">
+                    <h2 className="text-lg font-semibold text-foreground">
+                      Provider 共享
+                    </h2>
+                    <p className="text-sm text-default-500">
+                      将本地节点分享给其他面板，统一管理
+                      Token、端口范围和到期策略。
+                    </p>
+                  </div>
+                  <div className="flex justify-center">
+                    <Button
+                      color="primary"
+                      startContent={<ShareIcon className="w-4 h-4" />}
+                      onPress={() => setCreateShareOpen(true)}
+                    >
+                      创建共享
+                    </Button>
+                  </div>
                 </div>
-                <Button
-                  isIconOnly
-                  className="self-start md:self-auto"
-                  color="primary"
-                  title="创建分享"
-                  onPress={() => setCreateShareOpen(true)}
-                >
-                  <ShareIcon className="w-4 h-4" />
-                </Button>
               </div>
 
               {loading ? (
@@ -445,17 +447,8 @@ export default function PanelSharingPage() {
                     暂无分享
                   </p>
                   <p className="mt-2 text-sm text-default-500">
-                    先创建一个分享，把本地节点开放给其他面板使用。
+                    当前无可展示的共享记录。
                   </p>
-                  <div className="mt-5 flex justify-center">
-                    <Button
-                      color="primary"
-                      variant="flat"
-                      onPress={() => setCreateShareOpen(true)}
-                    >
-                      创建第一个分享
-                    </Button>
-                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -564,24 +557,26 @@ export default function PanelSharingPage() {
         >
           <Card>
             <CardBody className="space-y-5">
-              <div className="mt-4 flex flex-col gap-4 rounded-lg border border-divider bg-default-50/60 dark:bg-default-100/20 p-4 md:flex-row md:items-center md:justify-between">
-                <div className="space-y-1">
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Consumer 接入
-                  </h2>
-                  <p className="text-sm text-default-500">
-                    导入远程节点后，可在这里查看端口占用和同步状态。
-                  </p>
+              <div className="mt-4 rounded-lg border border-divider bg-default-50/60 dark:bg-default-100/20 p-4">
+                <div className="space-y-4 text-center">
+                  <div className="space-y-1">
+                    <h2 className="text-lg font-semibold text-foreground">
+                      Consumer 接入
+                    </h2>
+                    <p className="text-sm text-default-500">
+                      导入远程节点后，可在这里查看端口占用和同步状态。
+                    </p>
+                  </div>
+                  <div className="flex justify-center">
+                    <Button
+                      color="secondary"
+                      startContent={<GlobeIcon className="w-4 h-4" />}
+                      onPress={() => setImportNodeOpen(true)}
+                    >
+                      导入远程节点
+                    </Button>
+                  </div>
                 </div>
-                <Button
-                  isIconOnly
-                  className="self-start md:self-auto"
-                  color="secondary"
-                  title="导入远程节点"
-                  onPress={() => setImportNodeOpen(true)}
-                >
-                  <GlobeIcon className="w-4 h-4" />
-                </Button>
               </div>
 
               {remoteUsageLoading ? (
@@ -594,17 +589,8 @@ export default function PanelSharingPage() {
                     暂无远程节点占用记录
                   </p>
                   <p className="mt-2 text-sm text-default-500">
-                    导入远程节点并创建隧道后，这里会显示远端端口占用情况。
+                    当前无可展示的远程端口占用数据。
                   </p>
-                  <div className="mt-5 flex justify-center">
-                    <Button
-                      color="secondary"
-                      variant="flat"
-                      onPress={() => setImportNodeOpen(true)}
-                    >
-                      去导入远程节点
-                    </Button>
-                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

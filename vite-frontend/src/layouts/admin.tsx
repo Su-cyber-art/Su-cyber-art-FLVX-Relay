@@ -20,7 +20,6 @@ import {
 } from "@/shadcn-bridge/heroui/modal";
 import { Input } from "@/shadcn-bridge/heroui/input";
 import { BrandLogo } from "@/components/brand-logo";
-import { VersionFooter } from "@/components/version-footer";
 import { updatePassword } from "@/api";
 import { safeLogout } from "@/utils/logout";
 import { siteConfig } from "@/config/site";
@@ -389,17 +388,23 @@ export default function AdminLayout({
           </ul>
         </nav>
 
-        {/* 底部版权信息和折叠按钮 */}
+        {/* 底部仓库链接和折叠按钮 */}
         <div className="px-5 py-2 pb-4 mt-auto flex-shrink-0 flex items-center justify-between overflow-hidden whitespace-nowrap box-border">
           <div
             className={`transition-all duration-300 overflow-hidden flex items-center ${isCollapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"}`}
           >
-            <VersionFooter
-              poweredClassName="text-xs text-gray-400 dark:text-gray-500"
-              updateBadgeClassName="ml-2 inline-flex items-center rounded-full bg-rose-500/90 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white"
-              version={siteConfig.version}
-              versionClassName="text-xs text-gray-400 dark:text-gray-500"
-            />
+            <a
+              aria-label="GitHub 仓库"
+              className="inline-flex items-center justify-center w-10 h-10 rounded-full text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+              href="https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay"
+              rel="noreferrer"
+              target="_blank"
+              title="GitHub 仓库"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.29 9.43 7.86 10.96.57.1.78-.24.78-.54 0-.27-.01-.98-.02-1.92-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.95.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.19-3.09-.12-.3-.52-1.5.11-3.13 0 0 .97-.31 3.18 1.18a11.08 11.08 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.64 1.63.24 2.83.12 3.13.74.8 1.19 1.83 1.19 3.09 0 4.43-2.69 5.4-5.25 5.68.41.36.78 1.07.78 2.16 0 1.56-.01 2.82-.01 3.2 0 .3.2.65.79.54A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z" />
+              </svg>
+            </a>
           </div>
 
           {/* 桌面端折叠按钮 */}

@@ -1,8 +1,6 @@
 name: Sync Upstream & De-brand
 
 on:
-  schedule:
-    - cron: '0 4 * * *'
   workflow_dispatch:
     inputs:
       create_release:

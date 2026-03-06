@@ -114,6 +114,16 @@ import {
   ViewListIcon,
   ViewSplitIcon,
 } from "@/components/icons";
+import {
+  GripVertical,
+  Pencil,
+  Activity,
+  Trash2,
+  ChevronDown,
+  Copy,
+  RefreshCw,
+  Layers,
+} from "lucide-react";
 
 interface Forward {
   id: number;
@@ -3631,8 +3641,12 @@ export default function ForwardPage() {
   return (
     <AnimatedPage className="px-3 lg:px-6 py-8">
       {/* 页面头部 */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-3">
-        <div className="flex-1 max-w-sm flex items-center gap-2">
+      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1 no-scrollbar">
+        <div
+          className={`flex-1 max-w-sm flex items-center gap-2 shrink-0 ${
+            isSearchVisible ? "min-w-[200px]" : "min-w-0"
+          }`}
+        >
           <SearchBar
             isVisible={isSearchVisible}
             placeholder="搜索规则名称、地址或用户名"
@@ -3642,202 +3656,209 @@ export default function ForwardPage() {
             onOpen={() => setIsSearchVisible(true)}
           />
         </div>
-        <div className="min-h-9 min-w-0 max-w-full overflow-x-auto touch-pan-x">
-          <div className="flex min-h-9 w-max min-w-full items-center justify-end gap-2 whitespace-nowrap sm:gap-3 [&>*]:shrink-0">
-            {selectMode ? (
-              <>
-                <span className="text-sm text-default-600 shrink-0">
-                  已选择 {selectedIds.size} 项
-                </span>
-                <Button
-                  isIconOnly
-                  color="primary"
-                  size="sm"
-                  title="全选"
-                  variant="flat"
-                  onPress={selectAll}
-                >
-                  <CheckAllIcon className="w-4 h-4" />
-                </Button>
-                <Button
-                  isIconOnly
-                  color="secondary"
-                  size="sm"
-                  title="清空"
-                  variant="flat"
-                  onPress={deselectAll}
-                >
-                  <XCircleIcon className="w-4 h-4" />
-                </Button>
-                <Button
-                  isIconOnly
-                  color="danger"
-                  isDisabled={selectedIds.size === 0}
-                  size="sm"
-                  title="删除"
-                  variant="flat"
-                  onPress={() => setBatchDeleteModalOpen(true)}
-                >
-                  <DeleteIcon className="w-4 h-4" />
-                </Button>
-                <Button
-                  isIconOnly
-                  color="warning"
-                  isDisabled={selectedIds.size === 0}
-                  isLoading={batchLoading}
-                  size="sm"
-                  title="停用"
-                  variant="flat"
-                  onPress={() => handleBatchToggleService(false)}
-                >
-                  <PauseIcon className="w-4 h-4" />
-                </Button>
-                <Button
-                  isIconOnly
-                  color="success"
-                  isDisabled={selectedIds.size === 0}
-                  isLoading={batchLoading}
-                  size="sm"
-                  title="启用"
-                  variant="flat"
-                  onPress={() => handleBatchToggleService(true)}
-                >
-                  <PlayIcon className="w-4 h-4" />
-                </Button>
-                <Button
-                  isIconOnly
-                  className="bg-cyan-100 text-cyan-700 hover:bg-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:hover:bg-cyan-900/45"
-                  color="default"
-                  isDisabled={selectedIds.size === 0}
-                  isLoading={batchLoading}
-                  size="sm"
-                  title="下发"
-                  variant="flat"
-                  onPress={handleBatchRedeploy}
-                >
-                  <SendIcon className="w-4 h-4" />
-                </Button>
-                <Button
-                  isIconOnly
-                  className="bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/45"
-                  color="default"
-                  isDisabled={selectedIds.size === 0}
-                  size="sm"
-                  title="更换隧道"
-                  variant="flat"
-                  onPress={() => setBatchChangeTunnelModalOpen(true)}
-                >
-                  <GitBranchIcon className="w-4 h-4" />
-                </Button>
-                <Button
-                  isIconOnly
-                  color="default"
-                  size="sm"
-                  title="退出"
-                  variant="solid"
-                  onPress={toggleSelectMode}
-                >
-                  <XIcon className="w-4 h-4" />
-                </Button>
-              </>
-            ) : (
-              <>
-                {/* 筛选按钮 */}
-                <Button
-                  isIconOnly
-                  aria-label="筛选条件"
-                  className={
-                    filterUserId !== "all" || filterTunnelId !== "all"
-                      ? "bg-primary/20 text-primary relative"
-                      : "text-default-600 relative"
-                  }
-                  color={
-                    filterUserId !== "all" || filterTunnelId !== "all"
-                      ? "primary"
-                      : "default"
-                  }
-                  size="sm"
-                  title="筛选条件"
-                  variant="flat"
-                  onPress={() => setIsFilterModalOpen(true)}
-                >
-                  <FunnelIcon className="w-4 h-4" />
-                  {(filterUserId !== "all" || filterTunnelId !== "all") && (
-                    <span className="absolute top-1.5 right-1.5 flex h-1.5 w-1.5 rounded-full bg-primary" />
-                  )}
-                </Button>
-                {/* 显示模式切换按钮 */}
-                <Button
-                  isIconOnly
-                  aria-label={
-                    viewMode === "grouped" ? "切换到直接显示" : "切换到分类显示"
-                  }
-                  className="text-sm"
-                  color="default"
-                  size="sm"
-                  title={
-                    viewMode === "grouped" ? "切换到直接显示" : "切换到分类显示"
-                  }
-                  variant="flat"
-                  onPress={handleViewModeChange}
-                >
-                  {viewMode === "grouped" ? (
-                    <ViewListIcon className="w-4 h-4" />
-                  ) : (
-                    <ViewSplitIcon className="w-4 h-4" />
-                  )}
-                </Button>
+        <div className="flex h-8 items-center justify-end gap-2 whitespace-nowrap sm:gap-3 shrink-0">
+          {selectMode ? (
+            <>
+              <span className="text-sm text-default-600 shrink-0 hidden sm:inline-block">
+                已选择 {selectedIds.size} 项
+              </span>
+              <Button
+                isIconOnly
+                className="h-8 w-8 min-w-8"
+                color="primary"
+                size="sm"
+                title="全选"
+                variant="flat"
+                onPress={selectAll}
+              >
+                <CheckAllIcon className="w-4 h-4" />
+              </Button>
+              <Button
+                isIconOnly
+                className="h-8 w-8 min-w-8"
+                color="secondary"
+                size="sm"
+                title="清空"
+                variant="flat"
+                onPress={deselectAll}
+              >
+                <XCircleIcon className="w-4 h-4" />
+              </Button>
+              <Button
+                isIconOnly
+                className="h-8 w-8 min-w-8"
+                color="danger"
+                isDisabled={selectedIds.size === 0}
+                size="sm"
+                title="删除"
+                variant="flat"
+                onPress={() => setBatchDeleteModalOpen(true)}
+              >
+                <DeleteIcon className="w-4 h-4" />
+              </Button>
+              <Button
+                isIconOnly
+                className="h-8 w-8 min-w-8"
+                color="warning"
+                isDisabled={selectedIds.size === 0}
+                isLoading={batchLoading}
+                size="sm"
+                title="停用"
+                variant="flat"
+                onPress={() => handleBatchToggleService(false)}
+              >
+                <PauseIcon className="w-4 h-4" />
+              </Button>
+              <Button
+                isIconOnly
+                className="h-8 w-8 min-w-8"
+                color="success"
+                isDisabled={selectedIds.size === 0}
+                isLoading={batchLoading}
+                size="sm"
+                title="启用"
+                variant="flat"
+                onPress={() => handleBatchToggleService(true)}
+              >
+                <PlayIcon className="w-4 h-4" />
+              </Button>
+              <Button
+                isIconOnly
+                className="bg-cyan-100 text-cyan-700 hover:bg-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:hover:bg-cyan-900/45 h-8 w-8 min-w-8"
+                color="default"
+                isDisabled={selectedIds.size === 0}
+                isLoading={batchLoading}
+                size="sm"
+                title="下发"
+                variant="flat"
+                onPress={handleBatchRedeploy}
+              >
+                <SendIcon className="w-4 h-4" />
+              </Button>
+              <Button
+                isIconOnly
+                className="bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/45 h-8 w-8 min-w-8"
+                color="default"
+                isDisabled={selectedIds.size === 0}
+                size="sm"
+                title="更换隧道"
+                variant="flat"
+                onPress={() => setBatchChangeTunnelModalOpen(true)}
+              >
+                <GitBranchIcon className="w-4 h-4" />
+              </Button>
+              <Button
+                isIconOnly
+                className="h-8 w-8 min-w-8"
+                color="default"
+                size="sm"
+                title="退出"
+                variant="solid"
+                onPress={toggleSelectMode}
+              >
+                <XIcon className="w-4 h-4" />
+              </Button>
+            </>
+          ) : (
+            <>
+              {/* 筛选按钮 */}
+              <Button
+                isIconOnly
+                aria-label="筛选条件"
+                className={`h-8 w-8 min-w-8 ${
+                  filterUserId !== "all" || filterTunnelId !== "all"
+                    ? "bg-primary/20 text-primary relative"
+                    : "text-default-600 relative"
+                }`}
+                color={
+                  filterUserId !== "all" || filterTunnelId !== "all"
+                    ? "primary"
+                    : "default"
+                }
+                size="sm"
+                title="筛选条件"
+                variant="flat"
+                onPress={() => setIsFilterModalOpen(true)}
+              >
+                <FunnelIcon className="w-4 h-4" />
+                {(filterUserId !== "all" || filterTunnelId !== "all") && (
+                  <span className="absolute top-1.5 right-1.5 flex h-1.5 w-1.5 rounded-full bg-primary" />
+                )}
+              </Button>
+              {/* 显示模式切换按钮 */}
+              <Button
+                isIconOnly
+                aria-label={
+                  viewMode === "grouped" ? "切换到直接显示" : "切换到分类显示"
+                }
+                className="text-sm h-8 w-8 min-w-8"
+                color="default"
+                size="sm"
+                title={
+                  viewMode === "grouped" ? "切换到直接显示" : "切换到分类显示"
+                }
+                variant="flat"
+                onPress={handleViewModeChange}
+              >
+                {viewMode === "grouped" ? (
+                  <ViewListIcon className="w-4 h-4" />
+                ) : (
+                  <ViewSplitIcon className="w-4 h-4" />
+                )}
+              </Button>
 
-                {/* 导入按钮 */}
-                <Button
-                  isIconOnly
-                  color="warning"
-                  size="sm"
-                  title="导入"
-                  variant="flat"
-                  onPress={handleImport}
-                >
-                  <UploadIcon className="w-4 h-4" />
-                </Button>
+              {/* 导入按钮 */}
+              <Button
+                isIconOnly
+                className="h-8 w-8 min-w-8"
+                color="warning"
+                size="sm"
+                title="导入"
+                variant="flat"
+                onPress={handleImport}
+              >
+                <UploadIcon className="w-4 h-4" />
+              </Button>
 
-                {/* 导出按钮 */}
-                <Button
-                  isIconOnly
-                  color="success"
-                  isLoading={exportLoading}
-                  size="sm"
-                  title="导出"
-                  variant="flat"
-                  onPress={handleExport}
-                >
-                  <DownloadIcon className="w-4 h-4" />
-                </Button>
+              {/* 导出按钮 */}
+              <Button
+                isIconOnly
+                className="h-8 w-8 min-w-8"
+                color="success"
+                isLoading={exportLoading}
+                size="sm"
+                title="导出"
+                variant="flat"
+                onPress={handleExport}
+              >
+                <DownloadIcon className="w-4 h-4" />
+              </Button>
 
-                <Button
-                  isIconOnly
-                  className="bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/45"
-                  color="default"
-                  size="sm"
-                  title="选择"
-                  variant="flat"
-                  onPress={toggleSelectMode}
-                >
-                  <ListCheckIcon className="w-4 h-4" />
-                </Button>
+              <Button
+                isIconOnly
+                className="bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/45 h-8 w-8 min-w-8"
+                color="default"
+                size="sm"
+                title="选择"
+                variant="flat"
+                onPress={toggleSelectMode}
+              >
+                <ListCheckIcon className="w-4 h-4" />
+              </Button>
 
-                <Button
-                  isIconOnly
-                  color="primary"
-                  size="sm"
-                  title="新增"
-                  variant="flat"
-                  onPress={handleAdd}
-                >
-                  <PlusIcon className="w-4 h-4" />
-                </Button>
-              </>
-            )}
-          </div>
+              <Button
+                isIconOnly
+                className="h-8 w-8 min-w-8"
+                color="primary"
+                size="sm"
+                title="新增"
+                variant="flat"
+                onPress={handleAdd}
+              >
+                <PlusIcon className="w-4 h-4" />
+              </Button>
+            </>
+          )}
         </div>
       </div>
 

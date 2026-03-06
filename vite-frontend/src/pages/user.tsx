@@ -345,12 +345,6 @@ export default function UserPage() {
     }
   };
 
-  // 用户管理操作
-  const handleSearch = () => {
-    setPagination((prev) => ({ ...prev, current: 1 }));
-    loadUsers();
-  };
-
   const handleAdd = () => {
     setIsEdit(false);
     setUserForm({

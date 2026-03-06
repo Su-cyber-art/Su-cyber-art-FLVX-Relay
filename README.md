@@ -1,7 +1,6 @@
 # FLVX
 
-> **联系我们**: [Telegram群组](https://t.me/flvxpanel)
-
+> **声明**：本仓库是基于 [Sagit-chu/flvx](https://github.com/Sagit-chu/flvx) 的去品牌化 (de-branded) 二次分发版本，移除了 "Powered by" 标识及版本更新提示等品牌信息，仅供个人学习与自用部署。原始项目的所有权利归原作者所有。如有任何不妥，请通过 [Issues](https://github.com/Su-cyber-art/FLVX/issues) 联系，将第一时间处理。
 
 ## 特性
 
@@ -179,12 +178,3 @@ This fork (FLVX) is no longer a light patch on top of the upstream project. It h
 
 请务必在合法、合规、安全的前提下使用本项目。
 
----
-## ⭐ 喝杯咖啡！（USDT）
-
-| 网络       | 地址                                                                 |
-|------------|----------------------------------------------------------------------|
-| BNB(BEP20) | `0xa608708fdc6279a2433fd4b82f0b72b8cbe97ed5`                          |
-| TRC20      | `TM8VYdU3s3gSX5PC8swjAJrAzZFCHKqG2k`                                  |
-| Aptos      | `0x49427bfcba1006a346447430689b2307ac156316bb34850d1d3029ff9d118da5`  |
-| polygon    |  `0xa608708fdc6279a2433fd4b82f0b72b8cbe97ed5`    |

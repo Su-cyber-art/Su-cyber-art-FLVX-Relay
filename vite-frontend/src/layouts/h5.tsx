@@ -7,6 +7,7 @@ import { siteConfig } from "@/config/site";
 import { useScrollTopOnPathChange } from "@/hooks/useScrollTopOnPathChange";
 import { safeLogout } from "@/utils/logout";
 import { getAdminFlag } from "@/utils/session";
+import { isWebViewFunc } from "@/utils/panel";
 
 interface TabItem {
   path: string;
@@ -115,9 +116,14 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
       <header className="bg-white dark:bg-black shadow-sm border-b border-gray-200 dark:border-gray-600 h-14 safe-top flex-shrink-0 flex items-center justify-between px-4 relative z-10">
         <div className="flex items-center gap-2">
           <BrandLogo size={20} />
-          <h1 className="text-sm font-bold text-foreground">
-            {siteConfig.name}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-sm font-bold text-foreground">
+              {siteConfig.name}
+            </h1>
+            <span className="text-xs text-gray-400 dark:text-gray-500">
+              {isWebViewFunc() ? siteConfig.app_version : siteConfig.version}
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center gap-1.5">

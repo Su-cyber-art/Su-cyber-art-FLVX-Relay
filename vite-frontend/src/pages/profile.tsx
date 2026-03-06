@@ -13,9 +13,7 @@ import {
   useDisclosure,
 } from "@/shadcn-bridge/heroui/modal";
 import { Input } from "@/shadcn-bridge/heroui/input";
-import { isWebViewFunc } from "@/utils/panel";
-import { siteConfig } from "@/config/site";
-import { VersionFooter } from "@/components/version-footer";
+
 import { updatePassword } from "@/api";
 import { safeLogout } from "@/utils/logout";
 import { getAdminFlag, getSessionName } from "@/utils/session";
@@ -267,15 +265,6 @@ export default function ProfilePage() {
           </CardBody>
         </Card>
 
-        <VersionFooter
-          containerClassName="fixed inset-x-0 bottom-20 text-center py-4"
-          poweredClassName="text-xs text-gray-400 dark:text-gray-500"
-          updateBadgeClassName="ml-2 inline-flex items-center rounded-full bg-rose-500/90 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white"
-          version={
-            isWebViewFunc() ? siteConfig.app_version : siteConfig.version
-          }
-          versionClassName="text-xs text-gray-400 dark:text-gray-500 mt-1"
-        />
       </div>
 
       {/* 修改密码弹窗 */}

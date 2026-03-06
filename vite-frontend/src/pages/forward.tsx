@@ -3755,16 +3755,12 @@ export default function ForwardPage() {
               <Button
                 isIconOnly
                 aria-label="筛选条件"
-                className={`h-8 w-8 min-w-8 ${
+                className={`h-8 w-8 min-w-8 relative ${
                   filterUserId !== "all" || filterTunnelId !== "all"
-                    ? "bg-primary/20 text-primary relative"
-                    : "text-default-600 relative"
+                    ? "bg-orange-200 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300"
+                    : "bg-orange-100 text-orange-700 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:hover:bg-orange-900/45"
                 }`}
-                color={
-                  filterUserId !== "all" || filterTunnelId !== "all"
-                    ? "primary"
-                    : "default"
-                }
+                color="default"
                 size="sm"
                 title="筛选条件"
                 variant="flat"
@@ -3772,7 +3768,7 @@ export default function ForwardPage() {
               >
                 <FunnelIcon className="w-4 h-4" />
                 {(filterUserId !== "all" || filterTunnelId !== "all") && (
-                  <span className="absolute top-1.5 right-1.5 flex h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span className="absolute top-1.5 right-1.5 flex h-1.5 w-1.5 rounded-full bg-red-500" />
                 )}
               </Button>
               {/* 显示模式切换按钮 */}
@@ -3781,7 +3777,7 @@ export default function ForwardPage() {
                 aria-label={
                   viewMode === "grouped" ? "切换到直接显示" : "切换到分类显示"
                 }
-                className="text-sm h-8 w-8 min-w-8"
+                className="text-sm h-8 w-8 min-w-8 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/45"
                 color="default"
                 size="sm"
                 title={

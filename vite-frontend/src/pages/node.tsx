@@ -1082,8 +1082,8 @@ export default function NodePage() {
           />
         </div>
 
-        <div className="min-h-9 min-w-0 max-w-full overflow-x-auto touch-pan-x">
-          <div className="flex min-h-9 w-max min-w-full items-center justify-end gap-2 whitespace-nowrap [&>*]:shrink-0">
+        <div className="h-8 min-w-0 max-w-full overflow-x-auto touch-pan-x">
+          <div className="flex h-8 w-max min-w-full items-center justify-end gap-2 whitespace-nowrap [&>*]:shrink-0">
             {selectMode ? (
               <>
                 <span className="text-sm text-default-600 shrink-0">

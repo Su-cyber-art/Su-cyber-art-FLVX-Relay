@@ -36,7 +36,7 @@ export function SearchBar({
             <Button
               isIconOnly
               aria-label="搜索"
-              className="text-default-600"
+              className="bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/45 h-8 w-8 min-w-8"
               color="default"
               size="sm"
               title="搜索"

@@ -97,6 +97,7 @@ import { useMobileBreakpoint } from "@/hooks/useMobileBreakpoint";
 import { useLocalStorageState } from "@/hooks/use-local-storage-state";
 import { saveOrder } from "@/utils/order-storage";
 import { JwtUtil } from "@/utils/jwt";
+import { PlusIcon, DeleteIcon, CheckAllIcon, XCircleIcon, UploadIcon, DownloadIcon, ListCheckIcon, XIcon, PauseIcon, PlayIcon, SendIcon, GitBranchIcon } from "@/components/icons";
 
 interface Forward {
   id: number;
@@ -3621,76 +3622,92 @@ export default function ForwardPage() {
                   已选择 {selectedIds.size} 项
                 </span>
                 <Button
+                  isIconOnly
                   color="primary"
                   size="sm"
                   variant="flat"
+                  title="全选"
                   onPress={selectAll}
                 >
-                  全选
+                  <CheckAllIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="secondary"
                   size="sm"
                   variant="flat"
+                  title="清空"
                   onPress={deselectAll}
                 >
-                  清空
+                  <XCircleIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="danger"
                   isDisabled={selectedIds.size === 0}
                   size="sm"
                   variant="flat"
+                  title="删除"
                   onPress={() => setBatchDeleteModalOpen(true)}
                 >
-                  删除
+                  <DeleteIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="warning"
                   isDisabled={selectedIds.size === 0}
                   isLoading={batchLoading}
                   size="sm"
                   variant="flat"
+                  title="停用"
                   onPress={() => handleBatchToggleService(false)}
                 >
-                  停用
+                  <PauseIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="success"
                   isDisabled={selectedIds.size === 0}
                   isLoading={batchLoading}
                   size="sm"
                   variant="flat"
+                  title="启用"
                   onPress={() => handleBatchToggleService(true)}
                 >
-                  启用
+                  <PlayIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="primary"
                   isDisabled={selectedIds.size === 0}
                   isLoading={batchLoading}
                   size="sm"
                   variant="flat"
+                  title="下发"
                   onPress={handleBatchRedeploy}
                 >
-                  下发
+                  <SendIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="secondary"
                   isDisabled={selectedIds.size === 0}
                   size="sm"
                   variant="flat"
+                  title="隧道"
                   onPress={() => setBatchChangeTunnelModalOpen(true)}
                 >
-                  隧道
+                  <GitBranchIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="secondary"
                   size="sm"
                   variant="solid"
+                  title="退出"
                   onPress={toggleSelectMode}
                 >
-                  退出
+                  <XIcon className="w-4 h-4" />
                 </Button>
               </>
             ) : (
@@ -3774,42 +3791,50 @@ export default function ForwardPage() {
 
                 {/* 导入按钮 */}
                 <Button
+                  isIconOnly
                   color="warning"
                   size="sm"
                   variant="flat"
+                  title="导入"
                   onPress={handleImport}
                 >
-                  导入
+                  <UploadIcon className="w-4 h-4" />
                 </Button>
 
                 {/* 导出按钮 */}
                 <Button
+                  isIconOnly
                   color="success"
                   isLoading={exportLoading}
                   size="sm"
                   variant="flat"
+                  title="导出"
                   onPress={handleExport}
                 >
-                  导出
+                  <DownloadIcon className="w-4 h-4" />
                 </Button>
 
                 <Button
+                  isIconOnly
                   className="bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:hover:bg-sky-900/45"
                   color="default"
                   size="sm"
                   variant="flat"
+                  title="批量"
                   onPress={toggleSelectMode}
                 >
-                  批量
+                  <ListCheckIcon className="w-4 h-4" />
                 </Button>
 
                 <Button
+                  isIconOnly
                   color="primary"
                   size="sm"
                   variant="flat"
+                  title="新增"
                   onPress={handleAdd}
                 >
-                  新增
+                  <PlusIcon className="w-4 h-4" />
                 </Button>
               </>
             )}

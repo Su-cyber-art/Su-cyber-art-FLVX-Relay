@@ -24,6 +24,7 @@ import {
   updateSpeedLimit,
   deleteSpeedLimit,
 } from "@/api";
+import { PlusIcon } from "@/components/icons";
 import { PageLoadingState } from "@/components/page-state";
 import { useLocalStorageState } from "@/hooks/use-local-storage-state";
 
@@ -231,8 +232,8 @@ export default function LimitPage() {
           />
         </div>
 
-        <Button color="primary" size="sm" variant="flat" onPress={handleAdd}>
-          新增
+        <Button isIconOnly color="primary" size="sm" title="新增" variant="flat" onPress={handleAdd}>
+          <PlusIcon className="w-4 h-4" />
         </Button>
       </div>
 

@@ -13,6 +13,7 @@ import {
   ModalFooter,
 } from "@/shadcn-bridge/heroui/modal";
 import { Select, SelectItem } from "@/shadcn-bridge/heroui/select";
+import { ShareIcon, GlobeIcon } from "@/components/icons";
 import {
   getNodeList,
   createPeerShare,
@@ -424,11 +425,13 @@ export default function PanelSharingPage() {
                   </p>
                 </div>
                 <Button
+                  isIconOnly
                   className="self-start md:self-auto"
                   color="primary"
+                  title="创建分享"
                   onPress={() => setCreateShareOpen(true)}
                 >
-                  创建分享
+                  <ShareIcon className="w-4 h-4" />
                 </Button>
               </div>
 
@@ -571,11 +574,13 @@ export default function PanelSharingPage() {
                   </p>
                 </div>
                 <Button
+                  isIconOnly
                   className="self-start md:self-auto"
                   color="secondary"
+                  title="导入远程节点"
                   onPress={() => setImportNodeOpen(true)}
                 >
-                  导入远程节点
+                  <GlobeIcon className="w-4 h-4" />
                 </Button>
               </div>
 

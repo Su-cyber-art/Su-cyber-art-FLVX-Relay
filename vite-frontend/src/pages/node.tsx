@@ -64,6 +64,7 @@ import { useNodeOfflineTimers } from "@/pages/node/use-node-offline-timers";
 import { useNodeRealtime } from "@/pages/node/use-node-realtime";
 import { useLocalStorageState } from "@/hooks/use-local-storage-state";
 import { loadStoredOrder, saveOrder } from "@/utils/order-storage";
+import { PlusIcon, DeleteIcon, CheckAllIcon, XCircleIcon, ListCheckIcon, XIcon, ArrowUpIcon } from "@/components/icons";
 
 interface Node {
   id: number;
@@ -1089,67 +1090,81 @@ export default function NodePage() {
                   已选 {selectedIds.size} 项
                 </span>
                 <Button
+                  isIconOnly
                   color="primary"
                   size="sm"
+                  title="全选"
                   variant="flat"
                   onPress={selectAll}
                 >
-                  全选
+                  <CheckAllIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="secondary"
                   size="sm"
+                  title="清空"
                   variant="flat"
                   onPress={deselectAll}
                 >
-                  清空
+                  <XCircleIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="warning"
                   isDisabled={selectedIds.size === 0}
                   isLoading={batchUpgradeLoading}
                   size="sm"
+                  title="升级"
                   variant="flat"
                   onPress={() => openUpgradeModal("batch")}
                 >
-                  升级
+                  <ArrowUpIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="danger"
                   isDisabled={selectedIds.size === 0}
                   size="sm"
+                  title="删除"
                   variant="flat"
                   onPress={() => setBatchDeleteModalOpen(true)}
                 >
-                  删除
+                  <DeleteIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="secondary"
                   size="sm"
+                  title="退出"
                   variant="solid"
                   onPress={toggleSelectMode}
                 >
-                  退出
+                  <XIcon className="w-4 h-4" />
                 </Button>
               </>
             ) : (
               <>
                 <Button
+                  isIconOnly
                   className="bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:hover:bg-sky-900/45"
                   color="default"
                   size="sm"
+                  title="批量"
                   variant="flat"
                   onPress={toggleSelectMode}
                 >
-                  批量
+                  <ListCheckIcon className="w-4 h-4" />
                 </Button>
                 <Button
+                  isIconOnly
                   color="primary"
                   size="sm"
+                  title="新增"
                   variant="flat"
                   onPress={handleAdd}
                 >
-                  新增
+                  <PlusIcon className="w-4 h-4" />
                 </Button>
               </>
             )}

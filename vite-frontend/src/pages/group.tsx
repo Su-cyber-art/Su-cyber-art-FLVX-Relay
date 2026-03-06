@@ -40,6 +40,7 @@ import {
   updateTunnelGroup,
   updateUserGroup,
 } from "@/api";
+import { FolderPlusIcon, ShieldCheckIcon } from "@/components/icons";
 import { getAdminFlag } from "@/utils/session";
 
 interface TunnelItem {
@@ -479,8 +480,8 @@ export default function GroupPage() {
       <Card>
         <CardHeader className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">隧道分组</h3>
-          <Button color="primary" size="sm" onPress={openCreateTunnelGroup}>
-            新建隧道分组
+          <Button isIconOnly color="primary" size="sm" title="新建隧道分组" onPress={openCreateTunnelGroup}>
+            <FolderPlusIcon className="w-4 h-4" />
           </Button>
         </CardHeader>
         <CardBody>
@@ -546,8 +547,8 @@ export default function GroupPage() {
       <Card>
         <CardHeader className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">用户分组</h3>
-          <Button color="primary" size="sm" onPress={openCreateUserGroup}>
-            新建用户分组
+          <Button isIconOnly color="primary" size="sm" title="新建用户分组" onPress={openCreateUserGroup}>
+            <FolderPlusIcon className="w-4 h-4" />
           </Button>
         </CardHeader>
         <CardBody>
@@ -645,13 +646,15 @@ export default function GroupPage() {
               {(item) => <SelectItem key={item.id}>{item.name}</SelectItem>}
             </Select>
             <Button
-              className="md:self-end md:justify-self-start whitespace-nowrap px-4"
+              isIconOnly
+              className="md:self-end md:justify-self-start"
               color="primary"
               isLoading={savingPermission}
               size="sm"
+              title="分配权限"
               onPress={handleAssignPermission}
             >
-              分配权限
+              <ShieldCheckIcon className="w-4 h-4" />
             </Button>
           </div>
 

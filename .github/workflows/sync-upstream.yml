@@ -1,0 +1,92 @@
+name: Sync Upstream & De-brand
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Auto-create a release tag after sync'
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    name: Sync from upstream
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CR_PAT }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/Sagit-chu/flvx.git 2>/dev/null || true
+
+      - name: Fetch upstream
+        run: git fetch upstream main
+
+      - name: Check for new commits
+        id: check
+        run: |
+          NEW=$(git rev-list HEAD..upstream/main --count)
+          echo "new_commits=$NEW" >> $GITHUB_OUTPUT
+          if [ "$NEW" -eq "0" ]; then
+            echo "✅ Already up-to-date with upstream"
+          else
+            echo "🔄 Found $NEW new upstream commit(s)"
+          fi
+
+      - name: Merge upstream
+        if: steps.check.outputs.new_commits != '0'
+        run: |
+          git merge upstream/main --no-edit --strategy-option theirs || {
+            echo "⚠️ Merge conflict — auto-resolving known overrides..."
+            git checkout --ours \
+              scripts/debrand.sh \
+              .github/workflows/sync-upstream.yml
+            git add \
+              scripts/debrand.sh \
+              .github/workflows/sync-upstream.yml
+            git -c core.editor=true merge --continue
+          }
+
+      - name: Apply de-branding
+        if: steps.check.outputs.new_commits != '0'
+        run: |
+          chmod +x scripts/debrand.sh
+          bash scripts/debrand.sh
+
+      - name: Commit changes
+        if: steps.check.outputs.new_commits != '0'
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No de-branding changes needed"
+          else
+            UPSTREAM_SHA=$(git rev-parse upstream/main | head -c 7)
+            git commit -m "chore: sync upstream ${UPSTREAM_SHA} + apply de-branding"
+          fi
+
+      - name: Push
+        if: steps.check.outputs.new_commits != '0'
+        run: git push origin main
+
+      - name: Create release tag
+        if: >-
+          steps.check.outputs.new_commits != '0' &&
+          github.event_name == 'workflow_dispatch' &&
+          github.event.inputs.create_release == 'true'
+        run: |
+          UPSTREAM_TAG=$(git describe --tags upstream/main --abbrev=0 2>/dev/null || echo "0.0.0")
+          TAG="${UPSTREAM_TAG}-custom"
+          echo "🏷️ Creating tag: $TAG"
+          git tag "$TAG"
+          git push origin "$TAG"

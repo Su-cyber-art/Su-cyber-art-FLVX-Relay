@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import {
   DndContext,
   KeyboardSensor,
@@ -64,7 +65,7 @@ import { useNodeOfflineTimers } from "@/pages/node/use-node-offline-timers";
 import { useNodeRealtime } from "@/pages/node/use-node-realtime";
 import { useLocalStorageState } from "@/hooks/use-local-storage-state";
 import { loadStoredOrder, saveOrder } from "@/utils/order-storage";
-import { PlusIcon, DeleteIcon, CheckAllIcon, XCircleIcon, ListCheckIcon, XIcon, ArrowUpIcon } from "@/components/icons";
+import { PlusIcon, DeleteIcon, CheckAllIcon, XCircleIcon, ListCheckIcon, XIcon, ArrowUpIcon, ShareIcon } from "@/components/icons";
 
 interface Node {
   id: number;
@@ -159,6 +160,7 @@ const SortableItem = ({
 };
 
 export default function NodePage() {
+  const navigate = useNavigate();
   const [nodeList, setNodeList] = useState<Node[]>([]);
   const [nodeOrder, setNodeOrder] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
@@ -1158,6 +1160,17 @@ export default function NodePage() {
                   onPress={toggleSelectMode}
                 >
                   <ListCheckIcon className="w-4 h-4" />
+                </Button>
+                <Button
+                  isIconOnly
+                  className="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/45"
+                  color="default"
+                  size="sm"
+                  title="面板共享"
+                  variant="flat"
+                  onPress={() => navigate("/panel-sharing")}
+                >
+                  <ShareIcon className="w-4 h-4" />
                 </Button>
                 <Button
                   isIconOnly

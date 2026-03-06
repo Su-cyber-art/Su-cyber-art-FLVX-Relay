@@ -1,6 +1,12 @@
 # FLVX
 
-> **声明**：本仓库是基于 [Sagit-chu/flvx](https://github.com/Sagit-chu/flvx) 的去品牌化 (de-branded) 二次分发版本，移除了 "Powered by" 标识及版本更新提示等品牌信息，仅供个人学习与自用部署。原始项目的所有权利归原作者所有。如有任何不妥，请通过 [Issues](https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/issues) 联系，将第一时间处理。
+> ### 声明
+>
+> 本仓库基于 [Sagit-chu/flvx](https://github.com/Sagit-chu/flvx) 项目进行去品牌化二次分发。为满足个人学习与自用部署需求，仓库已移除原项目中的版权标识（©）及版本更新提示等品牌展示信息。
+>
+> 本仓库仅用于技术研究与学习交流，不用于商业用途。原项目及其相关版权、商标及其他权利均归原作者及原仓库维护者所有。
+>
+> 如本仓库内容存在不妥，或原作者对相关内容有任何异议，欢迎通过 [Issues](https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/issues) 联系，我将在收到反馈后第一时间处理或删除相关内容。
 
 ## 特性
 

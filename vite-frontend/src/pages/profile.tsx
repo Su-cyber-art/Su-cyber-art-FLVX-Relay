@@ -287,28 +287,6 @@ export default function ProfilePage() {
                 </span>
               </button>
 
-              {/* 退出登录 */}
-              <button
-                className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
-                onClick={handleLogout}
-              >
-                <div className="w-10 h-10 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mb-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      clipRule="evenodd"
-                      d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
-                      fillRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <span className="text-xs text-foreground text-center">
-                  退出登录
-                </span>
-              </button>
             </div>
           </CardBody>
         </Card>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
+import { Button } from "@/shadcn-bridge/heroui/button";
 import { BrandLogo } from "@/components/brand-logo";
 import { siteConfig } from "@/config/site";
-import { getAdminFlag } from "@/utils/session";
 import { useScrollTopOnPathChange } from "@/hooks/useScrollTopOnPathChange";
+import { safeLogout } from "@/utils/logout";
+import { getAdminFlag } from "@/utils/session";
 
 interface TabItem {
   path: string;
@@ -92,6 +94,12 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
     navigate(path);
   };
 
+  // 顶部快速退出
+  const handleLogout = () => {
+    safeLogout();
+    navigate("/", { replace: true });
+  };
+
   // 过滤tab项（根据权限）
   const filteredTabItems = tabItems.filter(
     (item) => !item.adminOnly || isAdmin,
@@ -108,7 +116,24 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
           </h1>
         </div>
 
-        <div className="flex items-center gap-2" />
+        <div className="flex items-center gap-1.5">
+          <Button
+            isIconOnly
+            aria-label="退出登录"
+            className="min-w-0 w-8 h-8 text-red-600 dark:text-red-400"
+            size="sm"
+            variant="light"
+            onPress={handleLogout}
+          >
+            <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                clipRule="evenodd"
+                d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+                fillRule="evenodd"
+              />
+            </svg>
+          </Button>
+        </div>
       </header>
 
       {/* 主内容区域 */}

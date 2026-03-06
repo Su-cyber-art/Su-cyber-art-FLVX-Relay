@@ -121,7 +121,7 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex items-center gap-1.5">
-          {isAdmin && location.pathname === "/profile" && (
+          {isAdmin && (
             <Button
               isIconOnly
               aria-label="网站配置"

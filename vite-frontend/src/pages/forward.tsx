@@ -97,7 +97,23 @@ import { useMobileBreakpoint } from "@/hooks/useMobileBreakpoint";
 import { useLocalStorageState } from "@/hooks/use-local-storage-state";
 import { saveOrder } from "@/utils/order-storage";
 import { JwtUtil } from "@/utils/jwt";
-import { PlusIcon, DeleteIcon, CheckAllIcon, XCircleIcon, UploadIcon, DownloadIcon, ListCheckIcon, XIcon, PauseIcon, PlayIcon, SendIcon, GitBranchIcon } from "@/components/icons";
+import {
+  PlusIcon,
+  DeleteIcon,
+  CheckAllIcon,
+  XCircleIcon,
+  UploadIcon,
+  DownloadIcon,
+  ListCheckIcon,
+  XIcon,
+  PauseIcon,
+  PlayIcon,
+  SendIcon,
+  GitBranchIcon,
+  FunnelIcon,
+  ViewListIcon,
+  ViewSplitIcon,
+} from "@/components/icons";
 
 interface Forward {
   id: number;
@@ -700,7 +716,10 @@ export default function ForwardPage() {
       currentTunnel.portRangeMin > 0 &&
       currentTunnel.portRangeMax > 0
     ) {
-      return { min: currentTunnel.portRangeMin, max: currentTunnel.portRangeMax };
+      return {
+        min: currentTunnel.portRangeMin,
+        max: currentTunnel.portRangeMax,
+      };
     }
 
     return null;
@@ -1291,8 +1310,16 @@ export default function ForwardPage() {
       newErrors.tunnelId = "请选择关联隧道";
     }
 
-    if (form.inPort !== null && form.inPort !== undefined && form.inPort > 0 && currentTunnelPortRange) {
-      if (form.inPort < currentTunnelPortRange.min || form.inPort > currentTunnelPortRange.max) {
+    if (
+      form.inPort !== null &&
+      form.inPort !== undefined &&
+      form.inPort > 0 &&
+      currentTunnelPortRange
+    ) {
+      if (
+        form.inPort < currentTunnelPortRange.min ||
+        form.inPort > currentTunnelPortRange.max
+      ) {
         newErrors.inPort = `端口 ${currentTunnelPortRange.min}-${currentTunnelPortRange.max} 超出允许范围`;
       }
     }
@@ -1471,6 +1498,7 @@ export default function ForwardPage() {
           strategy: addressCount > 1 ? form.strategy : "fifo",
           speedId: normalizedSpeedId,
         };
+
         res = await createForward(createData);
       }
 
@@ -3625,8 +3653,8 @@ export default function ForwardPage() {
                   isIconOnly
                   color="primary"
                   size="sm"
-                  variant="flat"
                   title="全选"
+                  variant="flat"
                   onPress={selectAll}
                 >
                   <CheckAllIcon className="w-4 h-4" />
@@ -3635,8 +3663,8 @@ export default function ForwardPage() {
                   isIconOnly
                   color="secondary"
                   size="sm"
-                  variant="flat"
                   title="清空"
+                  variant="flat"
                   onPress={deselectAll}
                 >
                   <XCircleIcon className="w-4 h-4" />
@@ -3646,8 +3674,8 @@ export default function ForwardPage() {
                   color="danger"
                   isDisabled={selectedIds.size === 0}
                   size="sm"
-                  variant="flat"
                   title="删除"
+                  variant="flat"
                   onPress={() => setBatchDeleteModalOpen(true)}
                 >
                   <DeleteIcon className="w-4 h-4" />
@@ -3658,8 +3686,8 @@ export default function ForwardPage() {
                   isDisabled={selectedIds.size === 0}
                   isLoading={batchLoading}
                   size="sm"
-                  variant="flat"
                   title="停用"
+                  variant="flat"
                   onPress={() => handleBatchToggleService(false)}
                 >
                   <PauseIcon className="w-4 h-4" />
@@ -3670,8 +3698,8 @@ export default function ForwardPage() {
                   isDisabled={selectedIds.size === 0}
                   isLoading={batchLoading}
                   size="sm"
-                  variant="flat"
                   title="启用"
+                  variant="flat"
                   onPress={() => handleBatchToggleService(true)}
                 >
                   <PlayIcon className="w-4 h-4" />
@@ -3682,8 +3710,8 @@ export default function ForwardPage() {
                   isDisabled={selectedIds.size === 0}
                   isLoading={batchLoading}
                   size="sm"
-                  variant="flat"
                   title="下发"
+                  variant="flat"
                   onPress={handleBatchRedeploy}
                 >
                   <SendIcon className="w-4 h-4" />
@@ -3693,8 +3721,8 @@ export default function ForwardPage() {
                   color="secondary"
                   isDisabled={selectedIds.size === 0}
                   size="sm"
-                  variant="flat"
                   title="隧道"
+                  variant="flat"
                   onPress={() => setBatchChangeTunnelModalOpen(true)}
                 >
                   <GitBranchIcon className="w-4 h-4" />
@@ -3703,8 +3731,8 @@ export default function ForwardPage() {
                   isIconOnly
                   color="secondary"
                   size="sm"
-                  variant="solid"
                   title="退出"
+                  variant="solid"
                   onPress={toggleSelectMode}
                 >
                   <XIcon className="w-4 h-4" />
@@ -3731,20 +3759,7 @@ export default function ForwardPage() {
                   variant="flat"
                   onPress={() => setIsFilterModalOpen(true)}
                 >
-                  <svg
-                    aria-hidden="true"
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                    />
-                  </svg>
+                  <FunnelIcon className="w-4 h-4" />
                   {(filterUserId !== "all" || filterTunnelId !== "all") && (
                     <span className="absolute top-1.5 right-1.5 flex h-1.5 w-1.5 rounded-full bg-primary" />
                   )}
@@ -3765,27 +3780,9 @@ export default function ForwardPage() {
                   onPress={handleViewModeChange}
                 >
                   {viewMode === "grouped" ? (
-                    <svg
-                      aria-hidden="true"
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        clipRule="evenodd"
-                        d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zM3 16a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"
-                        fillRule="evenodd"
-                      />
-                    </svg>
+                    <ViewListIcon className="w-4 h-4" />
                   ) : (
-                    <svg
-                      aria-hidden="true"
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                    </svg>
+                    <ViewSplitIcon className="w-4 h-4" />
                   )}
                 </Button>
 
@@ -3794,8 +3791,8 @@ export default function ForwardPage() {
                   isIconOnly
                   color="warning"
                   size="sm"
-                  variant="flat"
                   title="导入"
+                  variant="flat"
                   onPress={handleImport}
                 >
                   <UploadIcon className="w-4 h-4" />
@@ -3807,8 +3804,8 @@ export default function ForwardPage() {
                   color="success"
                   isLoading={exportLoading}
                   size="sm"
-                  variant="flat"
                   title="导出"
+                  variant="flat"
                   onPress={handleExport}
                 >
                   <DownloadIcon className="w-4 h-4" />
@@ -3819,8 +3816,8 @@ export default function ForwardPage() {
                   className="bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:hover:bg-sky-900/45"
                   color="default"
                   size="sm"
-                  variant="flat"
                   title="批量"
+                  variant="flat"
                   onPress={toggleSelectMode}
                 >
                   <ListCheckIcon className="w-4 h-4" />
@@ -3830,8 +3827,8 @@ export default function ForwardPage() {
                   isIconOnly
                   color="primary"
                   size="sm"
-                  variant="flat"
                   title="新增"
+                  variant="flat"
                   onPress={handleAdd}
                 >
                   <PlusIcon className="w-4 h-4" />

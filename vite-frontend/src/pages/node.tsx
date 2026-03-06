@@ -1070,8 +1070,12 @@ export default function NodePage() {
 
   return (
     <AnimatedPage className="px-3 lg:px-6 py-8">
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-3">
-        <div className="flex-1 max-w-sm flex items-center gap-2">
+      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1 no-scrollbar">
+        <div
+          className={`flex-1 max-w-sm flex items-center gap-2 shrink-0 ${
+            isSearchVisible ? "min-w-[200px]" : "min-w-0"
+          }`}
+        >
           <SearchBar
             isVisible={isSearchVisible}
             placeholder="搜索节点名称或IP"
@@ -1082,8 +1086,7 @@ export default function NodePage() {
           />
         </div>
 
-        <div className="h-8 min-w-0 max-w-full overflow-x-auto touch-pan-x">
-          <div className="flex h-8 w-max min-w-full items-center justify-end gap-2 whitespace-nowrap [&>*]:shrink-0">
+        <div className="flex h-8 items-center justify-end gap-2 whitespace-nowrap shrink-0">
             {selectMode ? (
               <>
                 <span className="text-sm text-default-600 shrink-0">
@@ -1169,7 +1172,6 @@ export default function NodePage() {
               </>
             )}
           </div>
-        </div>
       </div>
 
       {!wsConnected && (

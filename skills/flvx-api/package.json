@@ -20,13 +20,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Su-cyber-art/FLVX.git",
+    "url": "git+https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay.git",
     "directory": "skills/flvx-api"
   },
   "bugs": {
-    "url": "https://github.com/Su-cyber-art/FLVX/issues"
+    "url": "https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/issues"
   },
-  "homepage": "https://github.com/Su-cyber-art/FLVX/tree/main/skills/flvx-api#readme",
+  "homepage": "https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/tree/main/skills/flvx-api#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"

@@ -294,8 +294,8 @@ jobs:
           cp panel_install.sh ./artifacts/panel_install.sh
 
           # 替换仓库地址和版本号
-          sed -i "s|Su-cyber-art/FLVX|${REPO}|g" ./artifacts/install.sh
-          sed -i "s|Su-cyber-art/FLVX|${REPO}|g" ./artifacts/panel_install.sh
+          sed -i "s|Su-cyber-art/Su-cyber-art-FLVX-Relay|${REPO}|g" ./artifacts/install.sh
+          sed -i "s|Su-cyber-art/Su-cyber-art-FLVX-Relay|${REPO}|g" ./artifacts/panel_install.sh
           sed -i "s|2.0.7-beta|${VERSION}|g" ./artifacts/install.sh
           sed -i "s|2.0.7-beta|${VERSION}|g" ./artifacts/panel_install.sh
 

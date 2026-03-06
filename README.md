@@ -1,6 +1,6 @@
 # FLVX
 
-> **声明**：本仓库是基于 [Sagit-chu/flvx](https://github.com/Sagit-chu/flvx) 的去品牌化 (de-branded) 二次分发版本，移除了 "Powered by" 标识及版本更新提示等品牌信息，仅供个人学习与自用部署。原始项目的所有权利归原作者所有。如有任何不妥，请通过 [Issues](https://github.com/Su-cyber-art/FLVX/issues) 联系，将第一时间处理。
+> **声明**：本仓库是基于 [Sagit-chu/flvx](https://github.com/Sagit-chu/flvx) 的去品牌化 (de-branded) 二次分发版本，移除了 "Powered by" 标识及版本更新提示等品牌信息，仅供个人学习与自用部署。原始项目的所有权利归原作者所有。如有任何不妥，请通过 [Issues](https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/issues) 联系，将第一时间处理。
 
 ## 特性
 
@@ -22,23 +22,23 @@
 #### 快速部署（安装最新版）
 面板端：
 ```bash
-curl -L https://raw.githubusercontent.com/Su-cyber-art/FLVX/main/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
+curl -L https://raw.githubusercontent.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/main/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
 ```
 节点端：
 ```bash
-curl -L https://raw.githubusercontent.com/Su-cyber-art/FLVX/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -L https://raw.githubusercontent.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 #### 安装特定版本
-从 [Releases](https://github.com/Su-cyber-art/FLVX/releases) 页面复制对应版本的安装命令，脚本会自动安装该版本而非最新版。
+从 [Releases](https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/releases) 页面复制对应版本的安装命令，脚本会自动安装该版本而非最新版。
 
 面板端（以 2.1.0 为例）：
 ```bash
-curl -L https://github.com/Su-cyber-art/FLVX/releases/download/2.1.0/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
+curl -L https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/releases/download/2.1.0/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
 ```
 节点端（以 2.1.0 为例）：
 ```bash
-curl -L https://github.com/Su-cyber-art/FLVX/releases/download/2.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -L https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/releases/download/2.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 #### PostgreSQL 部署（Docker Compose）

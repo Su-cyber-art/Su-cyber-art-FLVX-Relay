@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	githubRepo     = "Su-cyber-art/FLVX"
+	githubRepo     = "Su-cyber-art/Su-cyber-art-FLVX-Relay"
 	githubProxy    = "https://gcode.hostcentral.cc"
 	githubAPIBase  = "https://api.github.com"
 	githubHTMLBase = "https://github.com"

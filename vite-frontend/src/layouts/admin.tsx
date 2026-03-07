@@ -446,15 +446,26 @@ export default function AdminLayout({
               <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.29 9.43 7.86 10.96.57.1.78-.24.78-.54 0-.27-.01-.98-.02-1.92-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.95.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.19-3.09-.12-.3-.52-1.5.11-3.13 0 0 .97-.31 3.18 1.18a11.08 11.08 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.64 1.63.24 2.83.12 3.13.74.8 1.19 1.83 1.19 3.09 0 4.43-2.69 5.4-5.25 5.68.41.36.78 1.07.78 2.16 0 1.56-.01 2.82-.01 3.2 0 .3.2.65.79.54A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z" />
             </svg>
             {!isMobile && !isCollapsed && (
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+              <span className="inline-flex items-center text-xs font-medium text-gray-500 dark:text-gray-400">
                 {displayVersion}
+                <span
+                  className={`ml-1 inline-block h-1.5 w-1.5 rounded-full ${
+                    hasVersionUpdateHint
+                      ? "bg-red-500 animate-pulse"
+                      : "bg-emerald-500/80"
+                  }`}
+                />
               </span>
             )}
-            <span
-              className={`absolute right-1.5 top-1.5 inline-block h-2 w-2 rounded-full ${
-                hasVersionUpdateHint ? "bg-red-500 animate-pulse" : "bg-emerald-500/80"
-              }`}
-            />
+            {(isMobile || isCollapsed) && (
+              <span
+                className={`absolute right-1.5 top-1.5 inline-block h-2 w-2 rounded-full ${
+                  hasVersionUpdateHint
+                    ? "bg-red-500 animate-pulse"
+                    : "bg-emerald-500/80"
+                }`}
+              />
+            )}
           </a>
 
           {/* 桌面端折叠按钮 */}

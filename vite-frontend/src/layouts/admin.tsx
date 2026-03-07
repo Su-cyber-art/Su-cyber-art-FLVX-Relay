@@ -354,7 +354,11 @@ export default function AdminLayout({
       `}
       >
         {/* Logo 区域（桌面端承载用户菜单，消除顶部留白） */}
-        <div className="px-3 h-14 flex items-center overflow-hidden whitespace-nowrap box-border">
+        <div
+          className={`h-14 flex items-center overflow-hidden whitespace-nowrap box-border ${
+            !isMobile && isCollapsed ? "px-0 justify-center" : "px-3"
+          }`}
+        >
           <div className="flex-shrink-0 flex items-center justify-center w-10">
             <BrandLogo size={28} />
           </div>
@@ -380,13 +384,16 @@ export default function AdminLayout({
               const isActive = location.pathname === item.path;
 
               return (
-                <li key={item.path}>
+                <li
+                  key={item.path}
+                  className={!isMobile && isCollapsed ? "min-h-[44px] flex items-center justify-center" : ""}
+                >
                   <motion.button
                     className={`
                        relative transition-colors flex items-center
                        ${
                          isCollapsed
-                           ? "w-10 h-10 mx-auto justify-center rounded-full"
+                           ? "w-10 h-10 justify-center rounded-full"
                            : "w-full min-h-[44px] px-1 py-2 text-left rounded-lg"
                        }
                        ${

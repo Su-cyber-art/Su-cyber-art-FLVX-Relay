@@ -226,7 +226,11 @@ export const getLatestVersion = async (
 ): Promise<string | null> => {
   const now = Date.now();
 
-  if (!forceRefresh && latestVersionAnyCache.value && latestVersionAnyCache.expiresAt > now) {
+  if (
+    !forceRefresh &&
+    latestVersionAnyCache.value &&
+    latestVersionAnyCache.expiresAt > now
+  ) {
     return latestVersionAnyCache.value;
   }
 
@@ -236,17 +240,43 @@ export const getLatestVersion = async (
     return null;
   }
 
+  const headers = {
+    Accept: "application/vnd.github+json",
+    "Cache-Control": "no-cache",
+    Pragma: "no-cache",
+  };
+
+  // 优先使用 GitHub 官方 latest 语义，避免被其他命名分支/系列版本干扰
+  const latestUrl = forceRefresh
+    ? `https://api.github.com/repos/${repoPath}/releases/latest?t=${now}`
+    : `https://api.github.com/repos/${repoPath}/releases/latest`;
+
+  try {
+    const latestResponse = await fetch(latestUrl, { headers });
+
+    if (latestResponse.ok) {
+      const latestRelease = (await latestResponse.json()) as ReleaseItem;
+      const latestTag = (latestRelease.tag_name || "").trim();
+
+      if (isVersionLikeTag(latestTag)) {
+        latestVersionAnyCache = {
+          value: latestTag,
+          expiresAt: now + VERSION_CACHE_TTL_MS,
+        };
+
+        return latestTag;
+      }
+    }
+  } catch {
+    // ignore and fallback to releases list
+  }
+
+  // fallback：兼容 /latest 不可用或异常的场景
   const requestUrl = forceRefresh
     ? `https://api.github.com/repos/${repoPath}/releases?per_page=50&t=${now}`
     : `https://api.github.com/repos/${repoPath}/releases?per_page=50`;
 
-  const response = await fetch(requestUrl, {
-    headers: {
-      Accept: "application/vnd.github+json",
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
-    },
-  });
+  const response = await fetch(requestUrl, { headers });
 
   if (!response.ok) {
     return null;

@@ -399,7 +399,7 @@ export function Select<T>({
             >
               <div
                 className={cn(
-                  "block w-full overflow-x-auto overflow-y-hidden whitespace-nowrap [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden",
+                  "block w-full overflow-x-auto overflow-y-hidden whitespace-nowrap", 
                   textSizeClass(size),
                   selectedArray.length > 0
                     ? "text-foreground"

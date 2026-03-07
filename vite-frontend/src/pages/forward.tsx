@@ -3382,9 +3382,11 @@ export default function ForwardPage() {
               />
             )}
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground truncate text-sm">
-                {forward.name}
-              </h3>
+              <div className="overflow-x-auto overscroll-x-contain whitespace-nowrap [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-default-300/80">
+                <h3 className="inline-block min-w-full pr-2 font-semibold text-foreground text-sm">
+                  {forward.name}
+                </h3>
+              </div>
               <p className="text-xs text-default-500 truncate">
                 {normalizeForwardTunnelName(forward.tunnelName)}
               </p>
@@ -3434,7 +3436,7 @@ export default function ForwardPage() {
             {/* 地址信息 */}
             <div className="space-y-1">
               <button
-                className={`cursor-pointer px-2 py-1 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300 transition-colors duration-200 ${
+                className={`w-full cursor-pointer px-2 py-1 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300 transition-colors duration-200 ${
                   hasMultipleAddresses(forward.inIp)
                     ? "hover:bg-default-100 dark:hover:bg-default-200/50"
                     : ""
@@ -3474,7 +3476,7 @@ export default function ForwardPage() {
               </button>
 
               <button
-                className={`cursor-pointer px-2 py-1 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300 transition-colors duration-200 ${
+                className={`w-full cursor-pointer px-2 py-1 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300 transition-colors duration-200 ${
                   hasMultipleAddresses(forward.remoteAddr)
                     ? "hover:bg-default-100 dark:hover:bg-default-200/50"
                     : ""
@@ -3651,7 +3653,7 @@ export default function ForwardPage() {
   return (
     <AnimatedPage className="px-3 lg:px-6 py-8">
       {/* 页面头部 */}
-      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1 no-scrollbar">
+      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1">
         <div
           className={`flex-1 max-w-sm flex items-center gap-2 shrink-0 ${
             isSearchVisible ? "min-w-[200px]" : "min-w-0"

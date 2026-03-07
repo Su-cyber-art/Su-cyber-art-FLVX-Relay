@@ -1072,7 +1072,7 @@ export default function NodePage() {
 
   return (
     <AnimatedPage className="px-3 lg:px-6 py-8">
-      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1 no-scrollbar">
+      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1">
         <div
           className={`flex-1 max-w-sm flex items-center gap-2 shrink-0 ${
             isSearchVisible ? "min-w-[200px]" : "min-w-0"
@@ -1225,18 +1225,20 @@ export default function NodePage() {
                       >
                         <CardHeader className="pb-2 md:pb-2">
                           <div className="flex justify-between items-start w-full">
-                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
                               {selectMode && (
                                 <Checkbox
                                   isSelected={selectedIds.has(node.id)}
                                   onValueChange={() => toggleSelect(node.id)}
                                 />
                               )}
-                              <h3 className="font-semibold text-foreground truncate text-sm">
-                                {node.name}
-                              </h3>
+                              <div className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain whitespace-nowrap [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-default-300/80">
+                                <h3 className="inline-block min-w-full pr-2 font-semibold text-foreground text-sm">
+                                  {node.name}
+                                </h3>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-1.5 ml-2">
+                            <div className="flex shrink-0 items-center gap-1.5 ml-2 whitespace-nowrap">
                               <div
                                 className="cursor-grab active:cursor-grabbing p-2 text-default-400 hover:text-default-600 transition-colors touch-manipulation opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                                 {...listeners}
@@ -1270,7 +1272,7 @@ export default function NodePage() {
 
                                 return (
                                   <Chip
-                                    className="text-xs"
+                                    className="text-xs shrink-0 whitespace-nowrap"
                                     color={connectionStatusMeta.color}
                                     size="sm"
                                     variant="flat"

@@ -338,17 +338,19 @@ export default function AdminLayout({
       {/* 左侧菜单栏 */}
       <aside
         className={`
-        ${isMobile ? "fixed" : "relative"} 
+        ${isMobile ? "fixed" : "relative"}
         ${isMobile && !mobileMenuVisible ? "-translate-x-full" : "translate-x-0"}
-        ${isMobile ? "w-64" : isCollapsed ? "w-20" : "w-72"} 
-        bg-white dark:bg-black 
-        shadow-lg 
-        border-r border-gray-200 dark:border-gray-600
-        z-50 
+        ${isMobile ? "w-64" : isCollapsed ? "w-20" : "w-52"}
+        z-50
         transition-all duration-300 ease-in-out
         flex flex-col
-        ${isMobile ? "h-screen" : "h-full"}
-        ${isMobile ? "top-0 left-0" : ""}
+        ${isMobile ? "h-[calc(100vh-1.5rem)] top-3 left-3" : "h-[calc(100vh-1.5rem)] my-3 ml-3"}
+        rounded-[28px]
+        border border-white/45 dark:border-white/10
+        bg-white/65 dark:bg-black/35
+        backdrop-blur-xl
+        shadow-[0_10px_30px_rgba(17,24,39,0.16)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]
+        overflow-hidden
       `}
       >
         {/* Logo 区域 */}
@@ -366,7 +368,7 @@ export default function AdminLayout({
         </div>
 
         {/* 菜单导航 */}
-        <nav className="flex-1 px-3 py-6 overflow-y-auto overflow-x-hidden">
+        <nav className="flex-1 px-3 py-6 overflow-y-auto overflow-x-hidden no-scrollbar">
           <ul className="space-y-1">
             {filteredMenuItems.map((item) => {
               const isActive = location.pathname === item.path;
@@ -375,43 +377,25 @@ export default function AdminLayout({
                 <li key={item.path}>
                   <motion.button
                     className={`
-                       w-full flex items-center p-2 rounded-lg text-left
-                       relative min-h-[44px] overflow-hidden transition-colors
+                       w-full flex items-center rounded-lg px-2 py-2 text-left
+                       relative min-h-[44px] transition-colors
                        ${
                          isActive
-                           ? "text-primary-600 dark:text-primary-300"
-                           : "text-gray-700 dark:text-gray-200"
+                           ? "bg-primary-100 text-primary-600 dark:bg-primary-600/20 dark:text-primary-300"
+                           : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900"
                        }
                      `}
                     title={isCollapsed ? item.label : undefined}
                     transition={{ duration: 0.24 }}
                     onClick={() => handleMenuClick(item.path)}
                   >
-                    {isActive && (
-                      <motion.div
-                        className="absolute inset-0 rounded-lg bg-primary-100 dark:bg-primary-600/20"
-                        layoutId="sidebar-active"
-                        transition={{
-                          type: "spring",
-                          stiffness: 380,
-                          damping: 30,
-                        }}
-                      />
-                    )}
-                    {!isActive && (
-                      <motion.div
-                        className="absolute inset-0 rounded-lg bg-gray-100 dark:bg-gray-900 opacity-0"
-                        transition={{ duration: 0.24 }}
-                        whileHover={{ opacity: 1 }}
-                      />
-                    )}
-                    <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center relative z-10">
+                    <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
                       {item.icon}
                     </div>
                     <div
                       className={`transition-all duration-300 overflow-hidden flex items-center ${isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[200px] opacity-100 ml-2"}`}
                     >
-                      <span className="font-medium text-sm relative z-10 whitespace-nowrap">
+                      <span className="font-medium text-sm whitespace-nowrap">
                         {item.label}
                       </span>
                     </div>
@@ -515,10 +499,10 @@ export default function AdminLayout({
 
       {/* 主内容区域 */}
       <div
-        className={`flex flex-col flex-1 ${isMobile ? "min-h-0" : "h-full overflow-hidden"}`}
+        className={`flex flex-col flex-1 ${isMobile ? "min-h-0" : "h-[calc(100vh-1.5rem)] overflow-hidden mt-3 mr-3 ml-3"}`}
       >
         {/* 顶部导航栏 */}
-        <header className="bg-white dark:bg-black shadow-md border-b border-gray-200 dark:border-gray-600 h-14 flex items-center justify-between px-4 lg:px-6 relative z-10">
+        <header className="bg-white/60 dark:bg-black/30 shadow-md border border-white/45 dark:border-white/10 rounded-[22px] h-14 flex items-center justify-between px-4 lg:px-6 relative z-10 backdrop-blur-xl">
           <div className="flex items-center gap-4">
             {/* 移动端菜单按钮 */}
             {isMobile && (
@@ -614,7 +598,7 @@ export default function AdminLayout({
         </header>
 
         {/* 主内容 */}
-        <main className="flex-1 bg-gray-100 dark:bg-black overflow-y-auto">
+        <main className="flex-1 bg-gray-100 dark:bg-black overflow-y-auto mt-2 rounded-[22px] border border-white/35 dark:border-white/10">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

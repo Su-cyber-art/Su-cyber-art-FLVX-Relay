@@ -220,7 +220,7 @@ export default function LimitPage() {
 
   return (
     <AnimatedPage className="px-3 lg:px-6 py-8">
-      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1 no-scrollbar">
+      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1">
         <div
           className={`flex-1 max-w-sm flex items-center gap-2 shrink-0 ${
             isSearchVisible ? "min-w-[200px]" : "min-w-0"
@@ -257,9 +257,9 @@ export default function LimitPage() {
             <StaggerItem key={rule.id}>
               <Card className="shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden h-full">
                 <CardHeader className="pb-2 md:pb-2">
-                  <div className="flex justify-between items-start w-full">
-                    <div>
-                      <h3 className="font-semibold text-foreground">
+                  <div className="flex justify-between items-start w-full gap-2">
+                    <div className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain whitespace-nowrap [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-default-300/80">
+                      <h3 className="inline-block min-w-full pr-2 font-semibold text-foreground">
                         {rule.name}
                       </h3>
                     </div>

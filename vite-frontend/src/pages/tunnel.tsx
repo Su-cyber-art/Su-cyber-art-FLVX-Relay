@@ -962,7 +962,7 @@ export default function TunnelPage() {
 
   return (
     <AnimatedPage className="px-3 lg:px-6 py-8">
-      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1 no-scrollbar">
+      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1">
         <div className="flex-1 min-w-[200px] max-w-sm flex items-center gap-2 shrink-0">
           <SearchBar
             isVisible={isSearchVisible}
@@ -1088,9 +1088,11 @@ export default function TunnelPage() {
                               />
                             )}
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-foreground truncate text-sm">
-                                {tunnel.name}
-                              </h3>
+                              <div className="overflow-x-auto overscroll-x-contain whitespace-nowrap [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-default-300/80">
+                                <h3 className="inline-block min-w-full pr-2 font-semibold text-foreground text-sm">
+                                  {tunnel.name}
+                                </h3>
+                              </div>
                               <div className="flex items-center gap-1.5 mt-1">
                                 <Chip
                                   className={tunnelTypeChipClassName}

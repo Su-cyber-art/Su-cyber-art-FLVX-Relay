@@ -1,4 +1,4 @@
-import { Gem } from "lucide-react";
+import { Flame } from "lucide-react";
 
 type BrandLogoProps = {
   size?: number;
@@ -11,5 +11,5 @@ export const BrandLogo = ({
   className,
   alt = "brand logo",
 }: BrandLogoProps) => {
-  return <Gem className={className} size={size} aria-label={alt} />;
+  return <Flame className={className} size={size} aria-label={alt} />;
 };

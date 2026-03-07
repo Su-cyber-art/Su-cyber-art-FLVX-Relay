@@ -220,8 +220,12 @@ export default function LimitPage() {
 
   return (
     <AnimatedPage className="px-3 lg:px-6 py-8">
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-3">
-        <div className="flex-1 max-w-sm flex items-center gap-2">
+      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1 no-scrollbar">
+        <div
+          className={`flex-1 max-w-sm flex items-center gap-2 shrink-0 ${
+            isSearchVisible ? "min-w-[200px]" : "min-w-0"
+          }`}
+        >
           <SearchBar
             isVisible={isSearchVisible}
             placeholder="搜索规则名称"
@@ -232,9 +236,18 @@ export default function LimitPage() {
           />
         </div>
 
-        <Button isIconOnly color="primary" size="sm" title="新增" variant="flat" onPress={handleAdd}>
-          <PlusIcon className="w-4 h-4" />
-        </Button>
+        <div className="flex h-8 items-center justify-end gap-2 whitespace-nowrap shrink-0">
+          <Button
+            isIconOnly
+            color="primary"
+            size="sm"
+            title="新增"
+            variant="flat"
+            onPress={handleAdd}
+          >
+            <PlusIcon className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       {/* 统一卡片网格 */}

@@ -118,6 +118,8 @@ interface NodeForm {
   socks: number; // 0 关 1 开
 }
 
+type NodeTab = "local" | "remote";
+
 const SortableItem = ({
   id,
   children,
@@ -167,6 +169,10 @@ export default function NodePage() {
   const [searchKeyword, setSearchKeyword] = useLocalStorageState(
     "node-search-keyword",
     "",
+  );
+  const [activeTab, setActiveTab] = useLocalStorageState<NodeTab>(
+    "node-active-tab",
+    "local",
   );
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -966,7 +972,7 @@ export default function NodePage() {
   };
 
   const selectAll = () => {
-    setSelectedIds(new Set(sortedNodes.map((n) => n.id)));
+    setSelectedIds(new Set(displayNodes.map((n) => n.id)));
   };
 
   const deselectAll = () => {
@@ -1065,30 +1071,77 @@ export default function NodePage() {
     return sortedByDb;
   }, [nodeList, nodeOrder, searchKeyword]);
 
-  const sortableNodeIds = useMemo(
-    () => sortedNodes.map((n) => n.id),
+  const localNodes = useMemo(
+    () => sortedNodes.filter((node) => node.isRemote !== 1),
     [sortedNodes],
+  );
+
+  const remoteNodes = useMemo(
+    () => sortedNodes.filter((node) => node.isRemote === 1),
+    [sortedNodes],
+  );
+
+  const displayNodes = useMemo(
+    () => (activeTab === "remote" ? remoteNodes : localNodes),
+    [activeTab, localNodes, remoteNodes],
+  );
+
+  const sortableNodeIds = useMemo(
+    () => displayNodes.map((n) => n.id),
+    [displayNodes],
   );
 
   return (
     <AnimatedPage className="px-3 lg:px-6 py-8">
-      <div className="flex flex-row items-center justify-between mb-6 gap-3 overflow-x-auto pb-1">
-        <div
-          className={`flex-1 max-w-sm flex items-center gap-2 shrink-0 ${
-            isSearchVisible ? "min-w-[200px]" : "min-w-0"
-          }`}
-        >
-          <SearchBar
-            isVisible={isSearchVisible}
-            placeholder="搜索节点名称或IP"
-            value={searchKeyword}
-            onChange={setSearchKeyword}
-            onClose={() => setIsSearchVisible(false)}
-            onOpen={() => setIsSearchVisible(true)}
-          />
+      <div className="mb-6 space-y-3">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <Button
+            className="shrink-0"
+            color={activeTab === "local" ? "primary" : "default"}
+            size="sm"
+            variant={activeTab === "local" ? "solid" : "flat"}
+            onPress={() => setActiveTab("local")}
+          >
+            本地节点
+            <Chip className="ml-1" size="sm" variant="flat">
+              {localNodes.length}
+            </Chip>
+          </Button>
+          <Button
+            className="shrink-0"
+            color={activeTab === "remote" ? "primary" : "default"}
+            size="sm"
+            variant={activeTab === "remote" ? "solid" : "flat"}
+            onPress={() => setActiveTab("remote")}
+          >
+            远程节点
+            <Chip className="ml-1" size="sm" variant="flat">
+              {remoteNodes.length}
+            </Chip>
+          </Button>
         </div>
 
-        <div className="flex h-8 items-center justify-end gap-2 whitespace-nowrap shrink-0">
+        <div className="flex flex-row items-center justify-between gap-3 overflow-x-auto pb-1">
+          <div
+            className={`flex-1 max-w-sm flex items-center gap-2 shrink-0 ${
+              isSearchVisible ? "min-w-[200px]" : "min-w-0"
+            }`}
+          >
+            <SearchBar
+              isVisible={isSearchVisible}
+              placeholder={
+                activeTab === "remote"
+                  ? "搜索远程节点名称或IP"
+                  : "搜索本地节点名称或IP"
+              }
+              value={searchKeyword}
+              onChange={setSearchKeyword}
+              onClose={() => setIsSearchVisible(false)}
+              onOpen={() => setIsSearchVisible(true)}
+            />
+          </div>
+
+          <div className="flex h-8 items-center justify-end gap-2 whitespace-nowrap shrink-0">
             {selectMode ? (
               <>
                 <span className="text-sm text-default-600 shrink-0">
@@ -1185,6 +1238,7 @@ export default function NodePage() {
               </>
             )}
           </div>
+        </div>
       </div>
 
       {!wsConnected && (
@@ -1206,6 +1260,15 @@ export default function NodePage() {
           className="h-64"
           message="暂无节点配置，点击上方按钮开始创建"
         />
+      ) : displayNodes.length === 0 ? (
+        <PageEmptyState
+          className="h-64"
+          message={
+            activeTab === "remote"
+              ? "暂无远程节点"
+              : "暂无本地节点，点击上方按钮开始创建"
+          }
+        />
       ) : (
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
           <SortableContext
@@ -1213,7 +1276,7 @@ export default function NodePage() {
             strategy={rectSortingStrategy}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-              {sortedNodes.map((node) => {
+              {displayNodes.map((node) => {
                 const isRemoteNode = node.isRemote === 1;
 
                 return (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { siteConfig, getCachedConfigs } from "@/config/site";
-import { Logo } from "@/components/icons";
+import fallbackBrandIcon from "@/images/icon.png";
 
 type BrandLogoProps = {
   size?: number;
@@ -63,7 +63,15 @@ export const BrandLogo = ({
   }, []);
 
   if (!logoUrl || imageFailed) {
-    return <Logo className={className} size={size} />;
+    return (
+      <img
+        alt={alt}
+        className={className}
+        height={size}
+        src={fallbackBrandIcon}
+        width={size}
+      />
+    );
   }
 
   return (

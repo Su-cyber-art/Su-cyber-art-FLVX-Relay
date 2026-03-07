@@ -30,6 +30,7 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
   const currentVersion = isWebViewFunc()
     ? siteConfig.app_version
     : siteConfig.version;
+  const displayVersion = `v${String(currentVersion || "").replace(/^v/i, "")}`;
 
   useScrollTopOnPathChange();
 
@@ -168,10 +169,10 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
               <h1 className="text-sm font-bold text-foreground">
                 {siteConfig.name}
               </h1>
-              <span className="relative text-xs text-gray-400 dark:text-gray-500">
-                {currentVersion}
+              <span className="relative inline-flex items-center rounded-full bg-default-100/70 dark:bg-default-100/15 px-2 py-0.5 text-xs text-default-500 dark:text-default-400 max-w-[120px] truncate">
+                {displayVersion}
                 {hasVersionUpdateHint && (
-                  <span className="absolute -right-2 -top-1 inline-block h-2 w-2 rounded-full bg-red-500" />
+                  <span className="absolute -right-0.5 -top-0.5 inline-block h-2 w-2 rounded-full bg-red-500" />
                 )}
               </span>
             </div>

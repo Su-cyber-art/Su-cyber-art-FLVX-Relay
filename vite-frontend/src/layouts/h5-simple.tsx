@@ -23,7 +23,7 @@ export default function H5SimpleLayout({
     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-black">
       {/* 顶部导航栏（胶囊样式，固定悬浮） */}
       <header className="safe-top fixed top-0 left-0 right-0 px-4 pt-2 pb-2 z-40 pointer-events-none overflow-visible">
-        <div className="relative h-12 rounded-[22px] border border-white/70 dark:border-white/10 bg-white/80 dark:bg-black/65 backdrop-blur-md shadow-[0_6px_18px_rgba(17,24,39,0.08)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.35)] ring-1 ring-black/5 dark:ring-white/5 flex items-center justify-between px-3 pointer-events-auto overflow-visible [transform:translateZ(0)] [backface-visibility:hidden] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
+        <div className="relative h-12 rounded-[22px] border border-white/45 dark:border-white/15 bg-white/55 dark:bg-black/35 backdrop-blur-xl shadow-[0_8px_24px_rgba(17,24,39,0.14)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.45)] flex items-center justify-between px-3 pointer-events-auto overflow-visible [backdrop-filter:saturate(165%)_blur(18px)] [transform:translateZ(0)] [backface-visibility:hidden] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
           <div className="flex items-center gap-2">
             <Button isIconOnly size="sm" variant="light" onPress={handleBack}>
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

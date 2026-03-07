@@ -1525,7 +1525,7 @@ export default function ForwardPage() {
         }
         toast.success(isEdit ? "修改成功" : "创建成功");
         setModalOpen(false);
-        loadData();
+        loadData(false);
       } else {
         toast.error(res.msg || "操作失败");
       }

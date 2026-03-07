@@ -20,13 +20,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay.git",
+    "url": "git+https://github.com/Su-cyber-art/Yusa-Forward.git",
     "directory": "skills/flvx-api"
   },
   "bugs": {
-    "url": "https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/issues"
+    "url": "https://github.com/Su-cyber-art/Yusa-Forward/issues"
   },
-  "homepage": "https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/tree/main/skills/flvx-api#readme",
+  "homepage": "https://github.com/Su-cyber-art/Yusa-Forward/tree/main/skills/flvx-api#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"

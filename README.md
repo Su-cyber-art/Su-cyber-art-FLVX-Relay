@@ -6,7 +6,7 @@
 >
 > 本仓库仅用于技术研究与学习交流，不用于商业用途。原项目及其相关版权、商标及其他权利均归原作者及原仓库维护者所有。
 >
-> 如本仓库内容存在不妥，或原作者对相关内容有任何异议，欢迎通过 [Issues](https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/issues) 联系，我将在收到反馈后第一时间处理或删除相关内容。
+> 如本仓库内容存在不妥，或原作者对相关内容有任何异议，欢迎通过 [Issues](https://github.com/Su-cyber-art/Yusa-Forward/issues) 联系，我将在收到反馈后第一时间处理或删除相关内容。
 
 ## 特性
 
@@ -28,23 +28,23 @@
 #### 快速部署（安装最新版）
 面板端：
 ```bash
-curl -L https://raw.githubusercontent.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/main/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
+curl -L https://raw.githubusercontent.com/Su-cyber-art/Yusa-Forward/main/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
 ```
 节点端：
 ```bash
-curl -L https://raw.githubusercontent.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -L https://raw.githubusercontent.com/Su-cyber-art/Yusa-Forward/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 #### 安装特定版本
-从 [Releases](https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/releases) 页面复制对应版本的安装命令，脚本会自动安装该版本而非最新版。
+从 [Releases](https://github.com/Su-cyber-art/Yusa-Forward/releases) 页面复制对应版本的安装命令，脚本会自动安装该版本而非最新版。
 
 面板端（以 2.1.0 为例）：
 ```bash
-curl -L https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/releases/download/2.1.0/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
+curl -L https://github.com/Su-cyber-art/Yusa-Forward/releases/download/2.1.0/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
 ```
 节点端（以 2.1.0 为例）：
 ```bash
-curl -L https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay/releases/download/2.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -L https://github.com/Su-cyber-art/Yusa-Forward/releases/download/2.1.0/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 #### PostgreSQL 部署（Docker Compose）

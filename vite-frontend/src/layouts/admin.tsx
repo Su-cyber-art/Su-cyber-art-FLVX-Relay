@@ -443,7 +443,7 @@ export default function AdminLayout({
           <a
             aria-label="GitHub 仓库"
             className="relative flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors duration-200"
-            href="https://github.com/Su-cyber-art/Su-cyber-art-FLVX-Relay"
+            href="https://github.com/Su-cyber-art/Yusa-Forward"
             rel="noreferrer"
             target="_blank"
             title="GitHub 仓库"

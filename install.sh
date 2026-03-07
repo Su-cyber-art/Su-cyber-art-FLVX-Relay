@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # GitHub repo used for release downloads
-REPO="Su-cyber-art/Su-cyber-art-FLVX-Relay"
+REPO="Su-cyber-art/Yusa-Forward"
 
 # 固定版本号（Release 构建时自动填充，留空则获取最新版）
 PINNED_VERSION=""

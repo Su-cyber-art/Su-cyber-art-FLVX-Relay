@@ -163,7 +163,6 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
       {/* 顶部导航栏（胶囊样式，固定悬浮） */}
       <header className="safe-top fixed top-0 left-0 right-0 px-4 pt-2 pb-2 z-40 pointer-events-none overflow-visible">
         <div className="relative h-12 rounded-[22px] border border-white/70 dark:border-white/10 bg-white/80 dark:bg-black/65 backdrop-blur-md shadow-[0_6px_18px_rgba(17,24,39,0.08)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.35)] ring-1 ring-black/5 dark:ring-white/5 flex items-center justify-between px-3 pointer-events-auto overflow-visible [transform:translateZ(0)] [backface-visibility:hidden] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
-          <div aria-hidden className="pointer-events-none absolute inset-x-2 top-[1px] h-3 rounded-full bg-gradient-to-b from-white/70 via-white/25 to-transparent dark:from-white/20 dark:via-white/10" />
           <div className="flex items-center gap-2">
             <BrandLogo size={20} />
             <div className="flex items-center gap-2">

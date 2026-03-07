@@ -29,6 +29,11 @@ const latestVersionCache: Record<
   dev: { value: null, expiresAt: 0 },
 };
 
+let latestVersionAnyCache: LatestVersionCacheEntry = {
+  value: null,
+  expiresAt: 0,
+};
+
 const normalizeChannel = (
   value: string | null | undefined,
 ): UpdateReleaseChannel => {
@@ -56,6 +61,10 @@ export const setUpdateReleaseChannel = (
 
 const normalizeTag = (tag: string): string => {
   return tag.trim().replace(/^v/i, "");
+};
+
+const isVersionLikeTag = (tag: string): boolean => {
+  return /\d/.test(normalizeTag(tag));
 };
 
 type ReleaseTagChannel = UpdateReleaseChannel | null;
@@ -204,6 +213,58 @@ export const getLatestVersionByChannel = async (
   const latest = candidateTags.sort((a, b) => compareVersions(b, a))[0];
 
   latestVersionCache[normalizedChannel] = {
+    value: latest,
+    expiresAt: now + VERSION_CACHE_TTL_MS,
+  };
+
+  return latest;
+};
+
+export const getLatestVersion = async (
+  repoUrl: string,
+  forceRefresh = false,
+): Promise<string | null> => {
+  const now = Date.now();
+
+  if (!forceRefresh && latestVersionAnyCache.value && latestVersionAnyCache.expiresAt > now) {
+    return latestVersionAnyCache.value;
+  }
+
+  const repoPath = repoPathFromUrl(repoUrl);
+
+  if (!repoPath) {
+    return null;
+  }
+
+  const requestUrl = forceRefresh
+    ? `https://api.github.com/repos/${repoPath}/releases?per_page=50&t=${now}`
+    : `https://api.github.com/repos/${repoPath}/releases?per_page=50`;
+
+  const response = await fetch(requestUrl, {
+    headers: {
+      Accept: "application/vnd.github+json",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const releases = (await response.json()) as ReleaseItem[];
+  const candidateTags = releases
+    .filter((release) => !release.draft && typeof release.tag_name === "string")
+    .map((release) => (release.tag_name || "").trim())
+    .filter((tag) => isVersionLikeTag(tag));
+
+  if (candidateTags.length === 0) {
+    return null;
+  }
+
+  const latest = candidateTags.sort((a, b) => compareVersions(b, a))[0];
+
+  latestVersionAnyCache = {
     value: latest,
     expiresAt: now + VERSION_CACHE_TTL_MS,
   };

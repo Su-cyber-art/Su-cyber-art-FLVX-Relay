@@ -17,7 +17,7 @@ export const AnimatedPage = ({
     className={className}
     exit={{ opacity: 0, y: -10 }}
     initial={{ opacity: 0, y: 20 }}
-    transition={{ duration: 0.32, ease: [0.22, 0.61, 0.36, 1] }}
+    transition={{ duration: 0.42, ease: [0.22, 0.61, 0.36, 1] }}
   >
     {children}
   </motion.div>
@@ -32,8 +32,8 @@ export const staggerContainer = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.05,
+      staggerChildren: 0.08,
+      delayChildren: 0.08,
     },
   },
 };
@@ -46,7 +46,7 @@ export const staggerItem = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.34, ease: [0.25, 0.46, 0.45, 0.94] },
   },
 };
 
@@ -115,7 +115,7 @@ export const FadeIn = ({
     animate={{ opacity: 1, y: 0 }}
     className={className}
     initial={{ opacity: 0, y: 8 }}
-    transition={{ duration: 0.2, delay, ease: "easeOut" }}
+    transition={{ duration: 0.3, delay, ease: "easeOut" }}
   >
     {children}
   </motion.div>

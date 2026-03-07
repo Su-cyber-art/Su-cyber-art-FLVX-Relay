@@ -10,10 +10,8 @@ import { safeLogout } from "@/utils/logout";
 import { getAdminFlag } from "@/utils/session";
 import { isWebViewFunc } from "@/utils/panel";
 import {
-  getLatestVersionByChannel,
-  getUpdateReleaseChannel,
+  getLatestVersion,
   hasVersionUpdate,
-  UPDATE_CHANNEL_CHANGED_EVENT,
 } from "@/utils/version-update";
 
 interface TabItem {
@@ -107,12 +105,7 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
 
     const checkVersionUpdate = async (forceRefresh = false) => {
       try {
-        const channel = getUpdateReleaseChannel();
-        const latest = await getLatestVersionByChannel(
-          channel,
-          siteConfig.github_repo,
-          forceRefresh,
-        );
+        const latest = await getLatestVersion(siteConfig.github_repo, forceRefresh);
 
         if (!active) {
           return;
@@ -128,22 +121,10 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
       }
     };
 
-    const handleUpdateChannelChanged = () => {
-      void checkVersionUpdate(true);
-    };
-
     void checkVersionUpdate(true);
-    window.addEventListener(
-      UPDATE_CHANNEL_CHANGED_EVENT,
-      handleUpdateChannelChanged,
-    );
 
     return () => {
       active = false;
-      window.removeEventListener(
-        UPDATE_CHANNEL_CHANGED_EVENT,
-        handleUpdateChannelChanged,
-      );
     };
   }, [currentVersion]);
 
@@ -186,9 +167,11 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
                 title="打开仓库"
               >
                 <span className="max-w-[120px] truncate">{displayVersion}</span>
-                {!hasVersionUpdateHint && (
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                )}
+                <span
+                  className={`inline-block h-1.5 w-1.5 rounded-full ${
+                    hasVersionUpdateHint ? "bg-red-500 animate-pulse" : "bg-emerald-500 animate-pulse"
+                  }`}
+                />
               </a>
               {hasVersionUpdateHint && (
                 <a
@@ -266,7 +249,7 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{ duration: 0.34, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="min-h-full"
           >
             {children}

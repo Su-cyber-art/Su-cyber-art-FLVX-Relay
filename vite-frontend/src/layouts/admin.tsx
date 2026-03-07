@@ -26,10 +26,8 @@ import { siteConfig } from "@/config/site";
 import { useMobileBreakpoint } from "@/hooks/useMobileBreakpoint";
 import { getAdminFlag, getSessionName } from "@/utils/session";
 import {
-  getLatestVersionByChannel,
-  getUpdateReleaseChannel,
+  getLatestVersion,
   hasVersionUpdate,
-  UPDATE_CHANNEL_CHANGED_EVENT,
 } from "@/utils/version-update";
 
 interface MenuItem {
@@ -193,13 +191,9 @@ export default function AdminLayout({
   useEffect(() => {
     let active = true;
 
-    const checkVersionUpdate = async () => {
+    const checkVersionUpdate = async (forceRefresh = false) => {
       try {
-        const channel = getUpdateReleaseChannel();
-        const latest = await getLatestVersionByChannel(
-          channel,
-          siteConfig.github_repo,
-        );
+        const latest = await getLatestVersion(siteConfig.github_repo, forceRefresh);
 
         if (!active) {
           return;
@@ -215,15 +209,10 @@ export default function AdminLayout({
       }
     };
 
-    void checkVersionUpdate();
-    window.addEventListener(UPDATE_CHANNEL_CHANGED_EVENT, checkVersionUpdate);
+    void checkVersionUpdate(true);
 
     return () => {
       active = false;
-      window.removeEventListener(
-        UPDATE_CHANNEL_CHANGED_EVENT,
-        checkVersionUpdate,
-      );
     };
   }, []);
 
@@ -395,7 +384,7 @@ export default function AdminLayout({
                        }
                      `}
                     title={isCollapsed ? item.label : undefined}
-                    transition={{ duration: 0.15 }}
+                    transition={{ duration: 0.24 }}
                     onClick={() => handleMenuClick(item.path)}
                   >
                     {isActive && (
@@ -412,7 +401,7 @@ export default function AdminLayout({
                     {!isActive && (
                       <motion.div
                         className="absolute inset-0 rounded-lg bg-gray-100 dark:bg-gray-900 opacity-0"
-                        transition={{ duration: 0.15 }}
+                        transition={{ duration: 0.24 }}
                         whileHover={{ opacity: 1 }}
                       />
                     )}
@@ -461,9 +450,11 @@ export default function AdminLayout({
                 {displayVersion}
               </span>
             )}
-            {hasVersionUpdateHint && (
-              <span className="absolute right-1.5 top-1.5 inline-block h-2 w-2 rounded-full bg-red-500" />
-            )}
+            <span
+              className={`absolute right-1.5 top-1.5 inline-block h-2 w-2 rounded-full ${
+                hasVersionUpdateHint ? "bg-red-500 animate-pulse" : "bg-emerald-500/80"
+              }`}
+            />
           </a>
 
           {/* 桌面端折叠按钮 */}
@@ -620,7 +611,7 @@ export default function AdminLayout({
               className="h-full"
               exit={{ opacity: 0, y: -6 }}
               initial={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+              transition={{ duration: 0.34, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               {children}
             </motion.div>

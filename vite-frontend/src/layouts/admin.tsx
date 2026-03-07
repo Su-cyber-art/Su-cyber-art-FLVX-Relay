@@ -340,7 +340,7 @@ export default function AdminLayout({
         className={`
         ${isMobile ? "fixed" : "relative"}
         ${isMobile && !mobileMenuVisible ? "-translate-x-full" : "translate-x-0"}
-        ${isMobile ? "w-64" : isCollapsed ? "w-20" : "w-40"}
+        ${isMobile ? "w-64" : isCollapsed ? "w-20" : "w-52"}
         z-50
         transition-all duration-300 ease-in-out
         flex flex-col
@@ -370,7 +370,11 @@ export default function AdminLayout({
         </div>
 
         {/* 菜单导航 */}
-        <nav className="flex-1 px-2 py-6 overflow-y-auto overflow-x-hidden no-scrollbar">
+        <nav
+          className={`flex-1 py-6 overflow-y-auto overflow-x-hidden no-scrollbar ${
+            !isMobile && isCollapsed ? "px-1" : "px-2"
+          }`}
+        >
           <ul className="space-y-1">
             {filteredMenuItems.map((item) => {
               const isActive = location.pathname === item.path;
@@ -379,8 +383,12 @@ export default function AdminLayout({
                 <li key={item.path}>
                   <motion.button
                     className={`
-                       w-full flex items-center rounded-lg px-1 py-2 text-left
-                       relative min-h-[44px] transition-colors
+                       relative transition-colors flex items-center
+                       ${
+                         isCollapsed
+                           ? "w-10 h-10 mx-auto justify-center rounded-full"
+                           : "w-full min-h-[44px] px-1 py-2 text-left rounded-lg"
+                       }
                        ${
                          isActive
                            ? "bg-primary-100 text-primary-600 dark:bg-primary-600/20 dark:text-primary-300"
@@ -474,7 +482,7 @@ export default function AdminLayout({
         <div
           className={`px-3 py-2 pb-4 mt-auto flex-shrink-0 overflow-hidden whitespace-nowrap box-border flex ${
             !isMobile && isCollapsed
-              ? "flex-col items-start gap-2"
+              ? "flex-col items-center gap-2"
               : "items-center justify-between"
           }`}
         >
@@ -620,17 +628,9 @@ export default function AdminLayout({
       <div
         className={`flex flex-col flex-1 ${isMobile ? "min-h-0" : "h-[calc(100vh-1.5rem)] overflow-hidden mt-3 mr-3 ml-3"}`}
       >
-        {/* 顶部导航栏 */}
-        <header
-          className={`relative z-10 flex items-center ${
-            isMobile
-              ? "h-14 justify-between px-1"
-              : "h-10 justify-end rounded-[18px] border border-white/40 dark:border-white/10 bg-white/55 dark:bg-black/28 px-3 backdrop-blur-xl"
-          }`}
-        >
-          <div className={isMobile ? "flex items-center gap-4" : "hidden"}>
-            {/* 移动端菜单按钮 */}
-            {isMobile && (
+        {isMobile && (
+          <header className="relative z-10 flex h-14 items-center justify-between px-1">
+            <div className="flex items-center gap-4">
               <Button
                 isIconOnly
                 className="lg:hidden"
@@ -651,80 +651,75 @@ export default function AdminLayout({
                   />
                 </svg>
               </Button>
-            )}
-          </div>
+            </div>
 
-          <div className={isMobile ? "flex items-center gap-2" : "hidden"}>
-            {/* 用户菜单 */}
-            <Dropdown placement="bottom-end">
-              <DropdownTrigger>
-                <Button
-                  className={`text-sm font-medium text-foreground ${
-                    isMobile
-                      ? "h-10 rounded-full border border-white/45 dark:border-white/10 bg-white/70 dark:bg-black/35 px-3 shadow-sm backdrop-blur-md"
-                      : "h-8 rounded-full border border-white/55 dark:border-white/10 bg-white/78 dark:bg-black/36 px-3 shadow-sm backdrop-blur-md"
-                  }`}
-                  variant="light"
-                >
-                  {username}
-                  <svg
-                    className="w-4 h-4 ml-1"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+            <div className="flex items-center gap-2">
+              <Dropdown placement="bottom-end">
+                <DropdownTrigger>
+                  <Button
+                    className="h-10 rounded-full border border-white/45 dark:border-white/10 bg-white/70 dark:bg-black/35 px-3 text-sm font-medium text-foreground shadow-sm backdrop-blur-md"
+                    variant="light"
                   >
-                    <path
-                      clipRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      fillRule="evenodd"
-                    />
-                  </svg>
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="用户菜单">
-                <DropdownItem
-                  key="change-password"
-                  startContent={
+                    {username}
                     <svg
-                      className="w-4 h-4"
+                      className="w-4 h-4 ml-1"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
                       <path
                         clipRule="evenodd"
-                        d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                         fillRule="evenodd"
                       />
                     </svg>
-                  }
-                  onPress={onOpen}
-                >
-                  修改密码
-                </DropdownItem>
-                <DropdownItem
-                  key="logout"
-                  className="text-danger"
-                  color="danger"
-                  startContent={
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        clipRule="evenodd"
-                        d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
-                        fillRule="evenodd"
-                      />
-                    </svg>
-                  }
-                  onPress={handleLogout}
-                >
-                  退出登录
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        </header>
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="用户菜单">
+                  <DropdownItem
+                    key="change-password"
+                    startContent={
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          clipRule="evenodd"
+                          d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                          fillRule="evenodd"
+                        />
+                      </svg>
+                    }
+                    onPress={onOpen}
+                  >
+                    修改密码
+                  </DropdownItem>
+                  <DropdownItem
+                    key="logout"
+                    className="text-danger"
+                    color="danger"
+                    startContent={
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          clipRule="evenodd"
+                          d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+                          fillRule="evenodd"
+                        />
+                      </svg>
+                    }
+                    onPress={handleLogout}
+                  >
+                    退出登录
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </div>
+          </header>
+        )}
 
         {/* 主内容 */}
         <main

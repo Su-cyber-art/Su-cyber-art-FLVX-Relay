@@ -5,7 +5,7 @@ export type SiteConfig = typeof siteConfig;
 // 缓存相关常量
 const CACHE_PREFIX = "vite_config_";
 const VERSION = import.meta.env.VITE_APP_VERSION || "dev";
-const APP_VERSION = "1.0.3";
+const APP_VERSION = VERSION;
 const DEFAULT_FAVICON = "/favicon.ico";
 const FAVICON_LINK_ID = "app-favicon";
 const GITHUB_REPO =

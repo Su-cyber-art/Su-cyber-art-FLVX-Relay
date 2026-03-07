@@ -179,11 +179,11 @@ export default function ProfilePage() {
             <div className="relative">
               <Button
                 isIconOnly
-                className="absolute right-0 top-0"
+                className="absolute right-0 top-0 min-w-0 w-8 h-8 text-indigo-600 dark:text-indigo-400"
                 color="default"
                 size="sm"
                 title="修改密码"
-                variant="flat"
+                variant="light"
                 onPress={onOpen}
               >
                 <svg

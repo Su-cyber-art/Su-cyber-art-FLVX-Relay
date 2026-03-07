@@ -2,6 +2,7 @@ import type { SpeedLimitApiItem } from "@/api/types";
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import toast from "react-hot-toast";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   DndContext,
   closestCenter,
@@ -2836,7 +2837,26 @@ export default function ForwardPage() {
             </div>
           </div>
         </div>
-        {!collapsed && <div className={bodyClassName}>{children}</div>}
+        <AnimatePresence initial={false}>
+          {!collapsed && (
+            <motion.div
+              animate={{ height: "auto", opacity: 1 }}
+              className={bodyClassName}
+              exit={{ height: 0, opacity: 0 }}
+              initial={{ height: 0, opacity: 0 }}
+              style={{ overflow: "hidden" }}
+              transition={{ duration: 0.24, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <motion.div
+                animate={{ y: 0, opacity: 1 }}
+                initial={{ y: -6, opacity: 0 }}
+                transition={{ duration: 0.18, ease: "easeOut", delay: 0.04 }}
+              >
+                {children}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   };

@@ -1,5 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/shadcn-bridge/heroui/button";
 import { BrandLogo } from "@/components/brand-logo";
@@ -12,6 +13,7 @@ export default function H5SimpleLayout({
   children: React.ReactNode;
 }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useScrollTopOnPathChange();
 
@@ -48,7 +50,20 @@ export default function H5SimpleLayout({
       <div aria-hidden className="h-[calc(var(--safe-area-top)+4rem)]" />
 
       {/* 主内容区域 */}
-      <main className="flex-1 bg-gray-100 dark:bg-black pb-0">{children}</main>
+      <main className="flex-1 bg-gray-100 dark:bg-black pb-0">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="min-h-full"
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
+      </main>
     </div>
   );
 }

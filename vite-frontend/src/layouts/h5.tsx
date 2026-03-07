@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/shadcn-bridge/heroui/button";
 import { BrandLogo } from "@/components/brand-logo";
@@ -258,7 +259,20 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
       <div aria-hidden className="h-[calc(var(--safe-area-top)+4rem)]" />
 
       {/* 主内容区域 */}
-      <main className="flex-1 bg-gray-100 dark:bg-black">{children}</main>
+      <main className="flex-1 bg-gray-100 dark:bg-black">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="min-h-full"
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
+      </main>
 
       {/* 用于给固定 Tabbar 腾出空间的占位元素 */}
       <div aria-hidden className="h-[calc(4rem+var(--safe-area-bottom))]" />

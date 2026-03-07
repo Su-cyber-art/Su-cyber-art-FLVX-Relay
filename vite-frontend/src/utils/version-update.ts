@@ -159,12 +159,13 @@ const repoPathFromUrl = (repoUrl: string): string | null => {
 export const getLatestVersionByChannel = async (
   channel: UpdateReleaseChannel,
   repoUrl: string,
+  forceRefresh = false,
 ): Promise<string | null> => {
   const normalizedChannel = normalizeChannel(channel);
   const now = Date.now();
   const cached = latestVersionCache[normalizedChannel];
 
-  if (cached.value && cached.expiresAt > now) {
+  if (!forceRefresh && cached.value && cached.expiresAt > now) {
     return cached.value;
   }
 
@@ -174,14 +175,17 @@ export const getLatestVersionByChannel = async (
     return null;
   }
 
-  const response = await fetch(
-    `https://api.github.com/repos/${repoPath}/releases?per_page=50`,
-    {
-      headers: {
-        Accept: "application/vnd.github+json",
-      },
+  const requestUrl = forceRefresh
+    ? `https://api.github.com/repos/${repoPath}/releases?per_page=50&t=${now}`
+    : `https://api.github.com/repos/${repoPath}/releases?per_page=50`;
+
+  const response = await fetch(requestUrl, {
+    headers: {
+      Accept: "application/vnd.github+json",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
     },
-  );
+  });
 
   if (!response.ok) {
     return null;

@@ -104,12 +104,13 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let active = true;
 
-    const checkVersionUpdate = async () => {
+    const checkVersionUpdate = async (forceRefresh = false) => {
       try {
         const channel = getUpdateReleaseChannel();
         const latest = await getLatestVersionByChannel(
           channel,
           siteConfig.github_repo,
+          forceRefresh,
         );
 
         if (!active) {
@@ -126,14 +127,21 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
       }
     };
 
-    void checkVersionUpdate();
-    window.addEventListener(UPDATE_CHANNEL_CHANGED_EVENT, checkVersionUpdate);
+    const handleUpdateChannelChanged = () => {
+      void checkVersionUpdate(true);
+    };
+
+    void checkVersionUpdate(true);
+    window.addEventListener(
+      UPDATE_CHANNEL_CHANGED_EVENT,
+      handleUpdateChannelChanged,
+    );
 
     return () => {
       active = false;
       window.removeEventListener(
         UPDATE_CHANNEL_CHANGED_EVENT,
-        checkVersionUpdate,
+        handleUpdateChannelChanged,
       );
     };
   }, [currentVersion]);
@@ -177,11 +185,33 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
                 title="打开仓库"
               >
                 <span className="max-w-[120px] truncate">{displayVersion}</span>
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                {hasVersionUpdateHint && (
-                  <span className="absolute -right-0.5 -top-0.5 inline-block h-2 w-2 rounded-full bg-red-500" />
+                {!hasVersionUpdateHint && (
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 )}
               </a>
+              {hasVersionUpdateHint && (
+                <a
+                  className="inline-flex items-center gap-1 rounded-full border border-red-300/90 dark:border-red-500/60 bg-red-500/10 dark:bg-red-500/20 px-2 py-1 text-[10px] font-semibold text-red-600 dark:text-red-300 no-underline transition-all hover:bg-red-500/20 dark:hover:bg-red-500/30"
+                  href={`${siteConfig.github_repo.replace(/\.git$/i, "")}/releases/latest`}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  title="发现新版本，点击升级"
+                >
+                  <svg
+                    className="h-3 w-3"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 19V5" />
+                    <path d="M5 12l7-7 7 7" />
+                  </svg>
+                  升级
+                </a>
+              )}
             </div>
           </div>
 

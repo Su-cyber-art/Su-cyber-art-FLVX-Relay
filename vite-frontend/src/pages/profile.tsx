@@ -38,6 +38,7 @@ export default function ProfilePage() {
   const [username, setUsername] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
+  const [adminMenuExpanded, setAdminMenuExpanded] = useState(false);
   const [passwordForm, setPasswordForm] = useState<PasswordForm>({
     newUsername: "",
     currentPassword: "",
@@ -173,33 +174,60 @@ export default function ProfilePage() {
   return (
     <div className="px-3 lg:px-6 py-8 flex flex-col h-full">
       <div className="space-y-6 flex-1">
-        {/* 用户信息卡片 */}
+        {/* 用户信息卡片 + 管理下拉 */}
         <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
-          <CardBody className="p-4">
+          <CardBody className="p-4 space-y-4">
             <div className="relative">
-              <Button
-                isIconOnly
-                className="absolute right-0 top-0 min-w-0 w-8 h-8 text-indigo-600 dark:text-indigo-400"
-                color="default"
-                size="sm"
-                title="修改密码"
-                variant="light"
-                onPress={onOpen}
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
+              <div className="absolute right-0 top-0 flex items-center gap-1">
+                {isAdmin && (
+                  <Button
+                    isIconOnly
+                    className="min-w-0 w-8 h-8 text-default-500 dark:text-default-400"
+                    color="default"
+                    size="sm"
+                    title={adminMenuExpanded ? "收起管理菜单" : "展开管理菜单"}
+                    variant="light"
+                    onPress={() => setAdminMenuExpanded((prev) => !prev)}
+                  >
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-200 ${adminMenuExpanded ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M19 9l-7 7-7-7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                      />
+                    </svg>
+                  </Button>
+                )}
+                <Button
+                  isIconOnly
+                  className="min-w-0 w-8 h-8 text-indigo-600 dark:text-indigo-400"
+                  color="default"
+                  size="sm"
+                  title="修改密码"
+                  variant="light"
+                  onPress={onOpen}
                 >
-                  <path
-                    clipRule="evenodd"
-                    d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                    fillRule="evenodd"
-                  />
-                </svg>
-              </Button>
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      clipRule="evenodd"
+                      d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                      fillRule="evenodd"
+                    />
+                  </svg>
+                </Button>
+              </div>
 
-              <div className="flex items-center space-x-4 pr-12">
+              <div className="flex items-center space-x-4 pr-20">
                 <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
                   <svg
                     className="w-6 h-6 text-primary"
@@ -234,37 +262,33 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-          </CardBody>
-        </Card>
 
-        {/* 功能网格 */}
-        <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
-          <CardBody className="p-4">
-            <div className="grid grid-cols-3 gap-3">
-              {/* 管理员功能 */}
-              {isAdmin &&
-                adminMenuItems.map((item) => (
-                  <button
-                    key={item.path}
-                    className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
-                    onClick={() => navigate(item.path)}
-                  >
-                    <div
-                      className={`w-10 h-10 ${item.color} rounded-full flex items-center justify-center mb-2`}
+            {isAdmin && (
+              <div className="pt-1 border-t border-gray-100 dark:border-default-100/20">
+                <div
+                  className={`grid grid-cols-3 gap-3 transition-all duration-200 ${adminMenuExpanded ? "opacity-100" : "opacity-0 max-h-0 overflow-hidden pointer-events-none"}`}
+                >
+                  {adminMenuItems.map((item) => (
+                    <button
+                      key={item.path}
+                      className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
+                      onClick={() => navigate(item.path)}
                     >
-                      {item.icon}
-                    </div>
-                    <span className="text-xs text-foreground text-center">
-                      {item.label}
-                    </span>
-                  </button>
-                ))}
-
-
-            </div>
+                      <div
+                        className={`w-10 h-10 ${item.color} rounded-full flex items-center justify-center mb-2`}
+                      >
+                        {item.icon}
+                      </div>
+                      <span className="text-xs text-foreground text-center">
+                        {item.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardBody>
         </Card>
-
       </div>
 
       {/* 修改密码弹窗 */}

@@ -34,6 +34,12 @@ export interface SelectProps<T = unknown> extends FieldMetaProps {
   onSelectionChange?: (keys: Set<React.Key>) => void;
   placeholder?: string;
   selectedKeys?: SelectionValue;
+  selectedValueRenderer?: (context: {
+    selectedKeys: string[];
+    selectedLabels: string[];
+    defaultText: string;
+    placeholder: string;
+  }) => string;
   selectionMode?: SelectionMode;
   size?: "sm" | "md" | "lg";
   variant?: string;
@@ -162,6 +168,7 @@ export function Select<T>({
   onSelectionChange,
   placeholder,
   selectedKeys,
+  selectedValueRenderer,
   selectionMode = "single",
   size,
   dropdownPlacement = "bottom",
@@ -237,8 +244,17 @@ export function Select<T>({
     return optionLabelMap.get(keyText) ?? keyText;
   });
   const selectedFullText = resolvedSelectedValues.join("、");
-  const selectedText =
-    selectedArray.length > 0 ? selectedFullText : (placeholder ?? "请选择");
+  const resolvedPlaceholder = placeholder ?? "请选择";
+  const defaultSelectedText =
+    selectedArray.length > 0 ? selectedFullText : resolvedPlaceholder;
+  const selectedText = selectedValueRenderer
+    ? selectedValueRenderer({
+        selectedKeys: selectedArray,
+        selectedLabels: resolvedSelectedValues,
+        defaultText: defaultSelectedText,
+        placeholder: resolvedPlaceholder,
+      })
+    : defaultSelectedText;
 
   const updateMultipleSelection = (key: string, checked?: boolean) => {
     if (isDisabled || disabled.has(key)) {
@@ -375,18 +391,25 @@ export function Select<T>({
             type="button"
             onClick={() => setIsExpanded((prev) => !prev)}
           >
-            <span
-              className={cn(
-                "block min-w-0 flex-1 truncate",
-                textSizeClass(size),
-                selectedArray.length > 0
-                  ? "text-foreground"
-                  : "text-default-500",
-              )}
-              title={selectedArray.length > 0 ? selectedFullText : undefined}
+            <div
+              className="min-w-0 max-w-full flex-1 overflow-hidden"
+              onClick={(event) => event.stopPropagation()}
+              onPointerDown={(event) => event.stopPropagation()}
+              onTouchStart={(event) => event.stopPropagation()}
             >
-              {selectedText}
-            </span>
+              <div
+                className={cn(
+                  "block w-full overflow-x-auto overflow-y-hidden whitespace-nowrap [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden",
+                  textSizeClass(size),
+                  selectedArray.length > 0
+                    ? "text-foreground"
+                    : "text-default-500",
+                )}
+                title={selectedArray.length > 0 ? selectedFullText : undefined}
+              >
+                <span className="inline-block w-max min-w-full pr-1">{selectedText}</span>
+              </div>
+            </div>
             <ChevronDownIcon
               className={cn(
                 "h-4 w-4 flex-shrink-0 text-default-500 transition-transform",

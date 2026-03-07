@@ -1409,6 +1409,11 @@ export default function TunnelPage() {
                       selectedKeys={form.inNodeId.map((ct) =>
                         ct.nodeId.toString(),
                       )}
+                      selectedValueRenderer={({ selectedLabels, placeholder }) =>
+                        selectedLabels.length > 0
+                          ? `已选择 ${selectedLabels.length} 个入口节点`
+                          : placeholder
+                      }
                       selectionMode="multiple"
                       variant="bordered"
                       onSelectionChange={(keys) => {
@@ -1456,6 +1461,32 @@ export default function TunnelPage() {
                         </SelectItem>
                       ))}
                     </Select>
+
+                    {form.inNodeId.length > 0 && (
+                      <div className="rounded-lg border border-default-200/80 bg-default-50/70 p-3 dark:border-default-100/40 dark:bg-default-100/10">
+                        <div className="mb-2 flex items-center justify-between">
+                          <span className="text-xs font-medium text-default-700 dark:text-default-300">
+                            已选入口节点（{form.inNodeId.length}）
+                          </span>
+                        </div>
+                        <div className="max-h-32 space-y-1 overflow-y-auto pr-1">
+                          {form.inNodeId.map((ct) => {
+                            const node = nodes.find((n) => n.id === ct.nodeId);
+                            const label = node?.name || `节点 #${ct.nodeId}`;
+
+                            return (
+                              <div
+                                key={ct.nodeId}
+                                className="rounded-md border border-default-200/70 bg-white/90 px-2.5 py-1.5 text-xs text-default-700 break-all dark:border-default-100/40 dark:bg-default-50/10 dark:text-default-300"
+                                title={label}
+                              >
+                                {label}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* 隧道转发时显示转发链配置 */}

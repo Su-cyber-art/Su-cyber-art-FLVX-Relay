@@ -176,8 +176,8 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
                 target="_blank"
                 title="打开仓库"
               >
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="max-w-[120px] truncate">{displayVersion}</span>
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 {hasVersionUpdateHint && (
                   <span className="absolute -right-0.5 -top-0.5 inline-block h-2 w-2 rounded-full bg-red-500" />
                 )}

@@ -6,15 +6,12 @@ import { Input } from "@/shadcn-bridge/heroui/input";
 import { Button } from "@/shadcn-bridge/heroui/button";
 import { Card, CardBody } from "@/shadcn-bridge/heroui/card";
 import { Select, SelectItem } from "@/shadcn-bridge/heroui/select";
-import { Switch } from "@/shadcn-bridge/heroui/switch";
 import { reinitializeBaseURL } from "@/api/network";
-import { getConfigByName, updateConfig } from "@/api";
 import {
   type UpdateReleaseChannel,
   getUpdateReleaseChannel,
   setUpdateReleaseChannel,
 } from "@/utils/version-update";
-import { isAdmin } from "@/utils/auth";
 import {
   getPanelAddresses,
   savePanelAddress,
@@ -29,8 +26,6 @@ interface PanelAddress {
   inx: boolean;
 }
 
-const FORWARD_COMPACT_MODE_CONFIG_KEY = "forward_compact_mode";
-
 export const SettingsPage = () => {
   const navigate = useNavigate();
   const [panelAddresses, setPanelAddresses] = useState<PanelAddress[]>([]);
@@ -39,11 +34,6 @@ export const SettingsPage = () => {
   const [updateChannel, setUpdateChannel] = useState<UpdateReleaseChannel>(
     getUpdateReleaseChannel(),
   );
-  const [forwardCompactMode, setForwardCompactMode] = useState(false);
-  const [forwardCompactModeSaving, setForwardCompactModeSaving] =
-    useState(false);
-
-  const admin = isAdmin();
 
   const setPanelAddressesFunc = (newAddress: PanelAddress[]) => {
     setPanelAddresses(newAddress);
@@ -96,56 +86,7 @@ export const SettingsPage = () => {
   // 页面加载时获取数据
   useEffect(() => {
     loadPanelAddresses();
-    loadForwardCompactMode();
   }, []);
-
-  const loadForwardCompactMode = async () => {
-    try {
-      const res = await getConfigByName(FORWARD_COMPACT_MODE_CONFIG_KEY);
-      const enabled =
-        res.code === 0 &&
-        typeof res.data?.value === "string" &&
-        res.data.value === "true";
-
-      setForwardCompactMode(enabled);
-    } catch {
-      setForwardCompactMode(false);
-    }
-  };
-
-  const handleForwardCompactModeChange = async (enabled: boolean) => {
-    if (!admin || forwardCompactModeSaving) {
-      return;
-    }
-
-    const previous = forwardCompactMode;
-
-    setForwardCompactMode(enabled);
-    setForwardCompactModeSaving(true);
-    try {
-      const response = await updateConfig(
-        FORWARD_COMPACT_MODE_CONFIG_KEY,
-        enabled ? "true" : "false",
-      );
-
-      if (response.code === 0) {
-        toast.success(`规则页面精简模式已${enabled ? "开启" : "关闭"}`);
-        window.dispatchEvent(
-          new CustomEvent("forwardCompactModeChanged", {
-            detail: { enabled },
-          }),
-        );
-      } else {
-        setForwardCompactMode(previous);
-        toast.error(response.msg || "保存精简模式失败");
-      }
-    } catch {
-      setForwardCompactMode(previous);
-      toast.error("保存精简模式失败");
-    } finally {
-      setForwardCompactModeSaving(false);
-    }
-  };
 
   const handleUpdateChannelChange = (channel: UpdateReleaseChannel) => {
     setUpdateChannel(channel);
@@ -223,36 +164,6 @@ export const SettingsPage = () => {
             </CardBody>
           </Card>
 
-          <Card className="border border-gray-200 dark:border-gray-700">
-            <CardBody className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                显示设置
-              </h2>
-              <div className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      规则页面精简模式
-                    </p>
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      开启后，规则页面列表使用 2.1.6-alpha8 样式。{" "}
-                    </p>
-                  </div>
-                  <Switch
-                    color="primary"
-                    isDisabled={!admin || forwardCompactModeSaving}
-                    isSelected={forwardCompactMode}
-                    onValueChange={handleForwardCompactModeChange}
-                  />
-                </div>
-                {!admin && (
-                  <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
-                    仅管理员可修改该全局配置。
-                  </p>
-                )}
-              </div>
-            </CardBody>
-          </Card>
 
           {/* 添加新地址 */}
           <Card className="border border-gray-200 dark:border-gray-700">

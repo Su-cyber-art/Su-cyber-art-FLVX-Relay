@@ -21,25 +21,27 @@ export default function H5SimpleLayout({
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-black">
-      {/* 顶部导航栏 */}
-      <header className="bg-white dark:bg-black shadow-sm border-b border-gray-200 dark:border-gray-600 h-14 safe-top flex-shrink-0 flex items-center justify-between px-4 relative z-10">
-        <div className="flex items-center gap-2">
-          <Button isIconOnly size="sm" variant="light" onPress={handleBack}>
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                clipRule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                fillRule="evenodd"
-              />
-            </svg>
-          </Button>
-          <BrandLogo size={20} />
-          <h1 className="text-sm font-bold text-foreground">
-            {siteConfig.name}
-          </h1>
-        </div>
+      {/* 顶部导航栏（胶囊样式） */}
+      <header className="safe-top px-3 pt-2 pb-2 flex-shrink-0 relative z-10">
+        <div className="h-12 rounded-[22px] border border-white/60 dark:border-white/10 bg-white/75 dark:bg-black/65 backdrop-blur-md shadow-sm flex items-center justify-between px-3">
+          <div className="flex items-center gap-2">
+            <Button isIconOnly size="sm" variant="light" onPress={handleBack}>
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  clipRule="evenodd"
+                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                  fillRule="evenodd"
+                />
+              </svg>
+            </Button>
+            <BrandLogo size={20} />
+            <h1 className="text-sm font-bold text-foreground">
+              {siteConfig.name}
+            </h1>
+          </div>
 
-        <div className="flex items-center gap-2" />
+          <div className="flex items-center gap-2" />
+        </div>
       </header>
 
       {/* 主内容区域 */}

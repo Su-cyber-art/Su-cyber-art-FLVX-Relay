@@ -375,18 +375,24 @@ export default function AdminLayout({
 
         {/* 菜单导航 */}
         <nav
-          className={`flex-1 py-4 overflow-y-auto overflow-x-hidden no-scrollbar ${
-            !isMobile && isCollapsed ? "px-1" : "px-2"
+          className={`flex-1 overflow-y-auto overflow-x-hidden no-scrollbar ${
+            !isMobile && isCollapsed ? "px-1 py-2" : "px-2 py-4"
           }`}
         >
-          <ul className="space-y-1">
+          <ul
+            className={
+              !isMobile && isCollapsed
+                ? "h-full flex flex-col justify-between"
+                : "space-y-1"
+            }
+          >
             {filteredMenuItems.map((item) => {
               const isActive = location.pathname === item.path;
 
               return (
                 <li
                   key={item.path}
-                  className={!isMobile && isCollapsed ? "min-h-[44px] flex items-center justify-center" : ""}
+                  className={!isMobile && isCollapsed ? "min-h-[44px] flex items-center justify-center flex-1" : ""}
                 >
                   <motion.button
                     className={`

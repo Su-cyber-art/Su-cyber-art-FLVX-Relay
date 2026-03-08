@@ -126,6 +126,7 @@ interface ModalContentProps
   children: React.ReactNode | ((onClose: () => void) => React.ReactNode);
   scrollBehavior?: "inside" | "outside";
   size?: ModalSize;
+  onOpenAutoFocus?: (event: Event) => void;
 }
 
 export function ModalContent({
@@ -133,6 +134,7 @@ export function ModalContent({
   className,
   scrollBehavior,
   size,
+  onOpenAutoFocus,
   ...props
 }: ModalContentProps) {
   const context = useModalContext();
@@ -156,6 +158,10 @@ export function ModalContent({
           : "",
         className,
       )}
+      onOpenAutoFocus={(event) => {
+        event.preventDefault();
+        onOpenAutoFocus?.(event);
+      }}
       showCloseButton={false}
       {...props}
     >

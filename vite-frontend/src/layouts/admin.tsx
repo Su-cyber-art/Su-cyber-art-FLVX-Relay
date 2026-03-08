@@ -380,11 +380,7 @@ export default function AdminLayout({
           }`}
         >
           <ul
-            className={
-              !isMobile && isCollapsed
-                ? "h-full flex flex-col justify-between"
-                : "space-y-1"
-            }
+            className={!isMobile ? "h-full flex flex-col justify-between" : "space-y-1"}
           >
             {filteredMenuItems.map((item) => {
               const isActive = location.pathname === item.path;
@@ -392,7 +388,7 @@ export default function AdminLayout({
               return (
                 <li
                   key={item.path}
-                  className={!isMobile && isCollapsed ? "min-h-[44px] flex items-center justify-center flex-1" : ""}
+                  className={!isMobile ? "min-h-[44px] flex items-center justify-center flex-1" : ""}
                 >
                   <motion.button
                     className={`

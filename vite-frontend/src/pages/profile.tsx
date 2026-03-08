@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -14,9 +14,10 @@ import {
 } from "@/shadcn-bridge/heroui/modal";
 import { Input } from "@/shadcn-bridge/heroui/input";
 
-import { updatePassword } from "@/api";
+import { getConfigByName, updateConfigs, updatePassword } from "@/api";
 import { safeLogout } from "@/utils/logout";
 import { getAdminFlag, getSessionName } from "@/utils/session";
+import { convertBrandAssetToPngDataURL } from "@/utils/brand-asset";
 interface PasswordForm {
   newUsername: string;
   currentPassword: string;
@@ -32,6 +33,9 @@ interface MenuItem {
   description: string;
 }
 
+const PROFILE_AVATAR_KEY = "profile_avatar";
+const BRAND_FILE_ACCEPT = "image/png,image/jpeg,image/webp,image/svg+xml";
+
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -39,6 +43,10 @@ export default function ProfilePage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [adminMenuExpanded, setAdminMenuExpanded] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const [passwordForm, setPasswordForm] = useState<PasswordForm>({
     newUsername: "",
     currentPassword: "",
@@ -50,6 +58,25 @@ export default function ProfilePage() {
     // 获取用户信息
     setUsername(getSessionName() || "Admin");
     setIsAdmin(getAdminFlag());
+
+    const loadAvatar = async () => {
+      try {
+        const response = await getConfigByName(PROFILE_AVATAR_KEY);
+
+        if (
+          response.code === 0 &&
+          response.data &&
+          typeof response.data.value === "string"
+        ) {
+          setAvatarUrl(response.data.value);
+          setAvatarLoadFailed(false);
+        }
+      } catch {
+        // ignore avatar load error
+      }
+    };
+
+    void loadAvatar();
   }, []);
 
   // 管理员菜单项
@@ -96,6 +123,65 @@ export default function ProfilePage() {
     },
 
   ];
+
+  const triggerAvatarPicker = () => {
+    if (avatarUploading) return;
+    avatarInputRef.current?.click();
+  };
+
+  const handleAvatarFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setAvatarUploading(true);
+
+    try {
+      const pngDataURL = await convertBrandAssetToPngDataURL(file, "avatar");
+      const res = await updateConfigs({ [PROFILE_AVATAR_KEY]: pngDataURL });
+
+      if (res.code === 0) {
+        setAvatarUrl(pngDataURL);
+        setAvatarLoadFailed(false);
+        toast.success("头像上传成功");
+      } else {
+        toast.error(res.msg || "头像上传失败");
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "头像处理失败，请重试";
+
+      toast.error(message);
+    } finally {
+      setAvatarUploading(false);
+      event.target.value = "";
+    }
+  };
+
+  const clearAvatar = async () => {
+    if (avatarUploading) return;
+
+    setAvatarUploading(true);
+    try {
+      const res = await updateConfigs({ [PROFILE_AVATAR_KEY]: "" });
+
+      if (res.code === 0) {
+        setAvatarUrl("");
+        setAvatarLoadFailed(false);
+        toast.success("头像已清除");
+      } else {
+        toast.error(res.msg || "清除头像失败");
+      }
+    } catch {
+      toast.error("清除头像失败，请重试");
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
 
   // 退出登录
   const handleLogout = () => {
@@ -178,11 +264,11 @@ export default function ProfilePage() {
         <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
           <CardBody className="p-4 space-y-4">
             <div className="relative">
-              <div className="absolute right-0 top-0 flex items-center gap-1">
+              <div className="absolute right-0 top-0 flex items-center gap-1.5 opacity-80">
                 {isAdmin && (
                   <Button
                     isIconOnly
-                    className="min-w-0 w-8 h-8 text-default-500 dark:text-default-400"
+                    className="min-w-0 w-7 h-7 text-default-500 dark:text-default-400"
                     color="default"
                     size="sm"
                     title={adminMenuExpanded ? "收起管理菜单" : "展开管理菜单"}
@@ -206,7 +292,7 @@ export default function ProfilePage() {
                 )}
                 <Button
                   isIconOnly
-                  className="min-w-0 w-8 h-8 text-indigo-600 dark:text-indigo-400"
+                  className="min-w-0 w-7 h-7 text-indigo-600/90 dark:text-indigo-400/90"
                   color="default"
                   size="sm"
                   title="修改密码"
@@ -214,7 +300,7 @@ export default function ProfilePage() {
                   onPress={onOpen}
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -227,25 +313,51 @@ export default function ProfilePage() {
                 </Button>
               </div>
 
-              <div className="flex items-center space-x-4 pr-20">
-                <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-primary"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+              <div className="flex items-start space-x-4 pr-18">
+                <input
+                  ref={avatarInputRef}
+                  accept={BRAND_FILE_ACCEPT}
+                  className="hidden"
+                  type="file"
+                  onChange={(event) => {
+                    void handleAvatarFileChange(event);
+                  }}
+                />
+                <div className="relative">
+                  <button
+                    className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center overflow-hidden border border-primary-200/60 dark:border-primary-400/30 hover:opacity-90 transition-opacity"
+                    title="上传头像"
+                    type="button"
+                    onClick={triggerAvatarPicker}
                   >
-                    <path
-                      clipRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      fillRule="evenodd"
-                    />
-                  </svg>
+                    {avatarUrl && !avatarLoadFailed ? (
+                      <img
+                        alt="profile avatar"
+                        className="w-full h-full object-cover"
+                        src={avatarUrl}
+                        onError={() => setAvatarLoadFailed(true)}
+                        onLoad={() => setAvatarLoadFailed(false)}
+                      />
+                    ) : (
+                      <svg
+                        className="w-7 h-7 text-primary"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          clipRule="evenodd"
+                          d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                          fillRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </button>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-base font-medium text-foreground">
+                  <h3 className="text-lg font-semibold text-foreground leading-tight">
                     {username}
                   </h3>
-                  <div className="flex items-center space-x-2 mt-1">
+                  <div className="flex items-center space-x-2 mt-1.5">
                     <span
                       className={`px-2 py-1 rounded-md text-xs font-medium ${
                         isAdmin
@@ -255,9 +367,32 @@ export default function ProfilePage() {
                     >
                       {isAdmin ? "管理员" : "普通用户"}
                     </span>
-                    <span className="text-xs text-default-500">
+                    <span className="text-[11px] text-default-400">
                       {new Date().toLocaleDateString("zh-CN")}
                     </span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-3">
+                    <Button
+                      className="h-8"
+                      color="primary"
+                      isLoading={avatarUploading}
+                      size="sm"
+                      variant="flat"
+                      onPress={triggerAvatarPicker}
+                    >
+                      {avatarUrl ? "替换头像" : "上传头像"}
+                    </Button>
+                    <Button
+                      className="h-8"
+                      isDisabled={!avatarUrl || avatarUploading}
+                      size="sm"
+                      variant="light"
+                      onPress={() => {
+                        void clearAvatar();
+                      }}
+                    >
+                      恢复默认
+                    </Button>
                   </div>
                 </div>
               </div>

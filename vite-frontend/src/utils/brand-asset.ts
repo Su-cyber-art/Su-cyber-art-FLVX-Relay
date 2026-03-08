@@ -1,4 +1,4 @@
-export type BrandAssetKind = "logo" | "favicon";
+export type BrandAssetKind = "logo" | "favicon" | "avatar";
 
 const MAX_BRAND_UPLOAD_BYTES = 2 * 1024 * 1024;
 const PNG_DATA_URL_PREFIX = "data:image/png;base64,";
@@ -6,6 +6,7 @@ const PNG_DATA_URL_PREFIX = "data:image/png;base64,";
 const OUTPUT_SIZE: Record<BrandAssetKind, number> = {
   logo: 96,
   favicon: 64,
+  avatar: 128,
 };
 
 const readFileAsDataURL = (file: File): Promise<string> => {

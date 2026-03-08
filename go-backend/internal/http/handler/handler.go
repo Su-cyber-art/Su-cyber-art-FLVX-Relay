@@ -793,7 +793,7 @@ func (h *Handler) updateSingleConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if value == "" && name != "app_logo" && name != "app_favicon" {
+	if value == "" && name != "app_logo" && name != "app_favicon" && name != "profile_avatar" {
 		response.WriteJSON(w, response.ErrDefault("配置值不能为空"))
 		return
 	}
@@ -808,7 +808,7 @@ func (h *Handler) updateSingleConfig(w http.ResponseWriter, r *http.Request) {
 
 func normalizeAndValidateConfigValue(key, value string) (string, error) {
 	switch strings.TrimSpace(key) {
-	case "app_logo", "app_favicon":
+	case "app_logo", "app_favicon", "profile_avatar":
 		normalized := strings.TrimSpace(value)
 		if normalized == "" {
 			return "", nil

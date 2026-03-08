@@ -3387,9 +3387,6 @@ export default function ForwardPage() {
                   {forward.name}
                 </h3>
               </div>
-              <p className="text-xs text-default-500 truncate">
-                {normalizeForwardTunnelName(forward.tunnelName)}
-              </p>
             </div>
             <div className="flex items-center gap-1.5 ml-2">
               {viewMode === "direct" && (

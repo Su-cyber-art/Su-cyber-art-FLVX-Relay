@@ -1511,15 +1511,6 @@ export default function NodePage() {
                                 <>
                                   <div className="text-xs rounded-md border border-default-200 dark:border-default-100/30 bg-default-50 dark:bg-default-100/20 p-2.5 space-y-2">
                                     <div className="flex justify-between gap-2">
-                                      <span className="text-default-500">远程地址</span>
-                                      <span
-                                        className="font-mono text-right truncate"
-                                        title={remoteUsage.remoteUrl || node.remoteUrl || "-"}
-                                      >
-                                        {remoteUsage.remoteUrl || node.remoteUrl || "-"}
-                                      </span>
-                                    </div>
-                                    <div className="flex justify-between gap-2">
                                       <span className="text-default-500">共享ID</span>
                                       <span className="font-mono">#{remoteUsage.shareId}</span>
                                     </div>

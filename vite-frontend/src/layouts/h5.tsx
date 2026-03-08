@@ -257,33 +257,42 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
         </AnimatePresence>
       </main>
 
-      {/* 用于给固定 Tabbar 腾出空间的占位元素 */}
-      <div aria-hidden className="h-[calc(4rem+var(--safe-area-bottom))]" />
+      {/* 用于给固定底部灵动岛腾出空间的占位元素 */}
+      <div aria-hidden className="h-[calc(var(--safe-area-bottom)+5.25rem)]" />
 
-      {/* 底部Tabbar */}
-      <nav className="bg-white dark:bg-black border-t border-gray-200 dark:border-gray-600 h-[calc(4rem+var(--safe-area-bottom))] flex-shrink-0 flex items-center justify-around px-2 fixed bottom-0 left-0 right-0 z-30">
-        {filteredTabItems.map((item) => {
-          const isActive = location.pathname === item.path;
+      {/* 底部Tabbar（灵动岛样式） */}
+      <nav className="safe-bottom fixed bottom-0 left-0 right-0 px-4 pb-2 z-30 pointer-events-none">
+        <div className="h-[4.25rem] rounded-[24px] border border-white/45 dark:border-white/15 bg-white/60 dark:bg-black/38 backdrop-blur-xl shadow-[0_8px_24px_rgba(17,24,39,0.14)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.45)] px-2 pt-1.5 pb-[max(0.4rem,var(--safe-area-bottom))] flex items-center justify-around pointer-events-auto overflow-hidden [backdrop-filter:saturate(165%)_blur(18px)] [transform:translateZ(0)] [backface-visibility:hidden] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
+          {filteredTabItems.map((item) => {
+            const isActive = location.pathname === item.path;
 
-          return (
-            <button
-              key={item.path}
-              className={`
-                flex flex-col items-center justify-center flex-1 h-full pb-[var(--safe-area-bottom)]
-                transition-colors duration-200 min-h-[44px]
-                ${
-                  isActive
-                    ? "text-primary-600 dark:text-primary-400"
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-                }
-              `}
-              onClick={() => handleTabClick(item.path)}
-            >
-              <div className="flex-shrink-0 mb-1">{item.icon}</div>
-              <span className="text-xs font-medium">{item.label}</span>
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={item.path}
+                className={`
+                  relative flex flex-col items-center justify-center flex-1 h-full rounded-2xl
+                  transition-all duration-200 min-h-[44px] gap-0.5
+                  ${
+                    isActive
+                      ? "text-primary-600 dark:text-primary-300"
+                      : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                  }
+                `}
+                onClick={() => handleTabClick(item.path)}
+              >
+                {isActive && (
+                  <span className="absolute inset-x-2 inset-y-1 rounded-xl bg-primary-500/12 dark:bg-primary-400/16" />
+                )}
+                <div className="relative z-10 flex-shrink-0 [&>svg]:w-5 [&>svg]:h-5 sm:[&>svg]:w-5.5 sm:[&>svg]:h-5.5">
+                  {item.icon}
+                </div>
+                <span className="relative z-10 text-[11px] leading-none font-medium truncate max-w-full px-1">
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </nav>
     </div>
   );

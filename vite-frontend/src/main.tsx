@@ -6,7 +6,14 @@ import App from "./App.tsx";
 import { Provider } from "./provider.tsx";
 import "@/styles/globals.css";
 
-registerSW({ immediate: true });
+const updateSW = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    void updateSW(true).catch(() => {
+      window.location.reload();
+    });
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>

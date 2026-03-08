@@ -1,19 +1,34 @@
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { registerSW } from "virtual:pwa-register";
-
 import App from "./App.tsx";
 import { Provider } from "./provider.tsx";
 import "@/styles/globals.css";
 
-const updateSW = registerSW({
-  immediate: true,
-  onNeedRefresh() {
-    void updateSW(true).catch(() => {
-      window.location.reload();
-    });
-  },
-});
+async function cleanupLegacyServiceWorkers() {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
+    return;
+  }
+
+  try {
+    const regs = await navigator.serviceWorker.getRegistrations();
+
+    await Promise.all(regs.map((reg) => reg.unregister()));
+  } catch {
+    // ignore
+  }
+
+  try {
+    if ("caches" in window) {
+      const keys = await caches.keys();
+
+      await Promise.all(keys.map((key) => caches.delete(key)));
+    }
+  } catch {
+    // ignore
+  }
+}
+
+void cleanupLegacyServiceWorkers();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>

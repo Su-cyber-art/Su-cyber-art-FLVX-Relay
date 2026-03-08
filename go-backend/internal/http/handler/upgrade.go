@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -27,7 +29,7 @@ const (
 
 var (
 	stableVersionPattern = regexp.MustCompile(`^\d+(?:\.\d+)+$`)
-	testKeywordPattern   = regexp.MustCompile(`(?i)(alpha|beta|rc)`)
+	testKeywordPattern   = regexp.MustCompile(`(?i)(alpha|beta|rc|\bb\d+\b)`)
 )
 
 type githubRelease struct {
@@ -36,6 +38,14 @@ type githubRelease struct {
 	PublishedAt string `json:"published_at"`
 	Prerelease  bool   `json:"prerelease"`
 	Draft       bool   `json:"draft"`
+}
+
+type releaseItem struct {
+	Version     string `json:"version"`
+	Name        string `json:"name"`
+	PublishedAt string `json:"publishedAt"`
+	Prerelease  bool   `json:"prerelease"`
+	Channel     string `json:"channel"`
 }
 
 func normalizeReleaseChannel(channel string) string {
@@ -50,16 +60,16 @@ func normalizeReleaseChannel(channel string) string {
 func releaseChannelFromTag(tag string) string {
 	normalized := strings.ToLower(strings.TrimSpace(tag))
 	if normalized == "" {
-		return releaseChannelDev
-	}
-	if testKeywordPattern.MatchString(normalized) {
-		return releaseChannelDev
+		return ""
 	}
 	if stableVersionPattern.MatchString(normalized) {
 		return releaseChannelStable
 	}
+	if testKeywordPattern.MatchString(normalized) {
+		return releaseChannelDev
+	}
 
-	return releaseChannelDev
+	return ""
 }
 
 func releaseChannelLabel(channel string) string {
@@ -95,6 +105,144 @@ func fetchGitHubReleases(perPage int) ([]githubRelease, error) {
 	return releases, nil
 }
 
+type releaseSortKey struct {
+	parts   []int
+	kind    int // 0=stable, 1=rc, 2=beta, 3=alpha, 4=build-b, 5=other
+	qualNum int
+}
+
+func parseReleaseSortKey(tag string) releaseSortKey {
+	normalized := strings.ToLower(strings.TrimSpace(tag))
+	if normalized == "" {
+		return releaseSortKey{kind: 5}
+	}
+
+	core := normalized
+	qualifier := ""
+	if idx := strings.Index(core, "-"); idx >= 0 {
+		qualifier = core[idx+1:]
+		core = core[:idx]
+	}
+
+	parts := make([]int, 0, 4)
+	for _, p := range strings.Split(core, ".") {
+		if p == "" {
+			continue
+		}
+		n, err := strconv.Atoi(p)
+		if err != nil {
+			parts = nil
+			break
+		}
+		parts = append(parts, n)
+	}
+
+	key := releaseSortKey{parts: parts, kind: 5}
+	if stableVersionPattern.MatchString(normalized) {
+		key.kind = 0
+		return key
+	}
+
+	qualifier = strings.TrimSpace(qualifier)
+	if qualifier == "" {
+		if m := regexp.MustCompile(`\bb(\d+)\b`).FindStringSubmatch(normalized); len(m) == 2 {
+			if n, err := strconv.Atoi(m[1]); err == nil {
+				key.kind = 4
+				key.qualNum = n
+				return key
+			}
+		}
+		return key
+	}
+
+	if m := regexp.MustCompile(`^rc\.?([0-9]+)?$`).FindStringSubmatch(qualifier); m != nil {
+		key.kind = 1
+		if len(m) > 1 && m[1] != "" {
+			if n, err := strconv.Atoi(m[1]); err == nil {
+				key.qualNum = n
+			}
+		}
+		return key
+	}
+	if m := regexp.MustCompile(`^beta\.?([0-9]+)?$`).FindStringSubmatch(qualifier); m != nil {
+		key.kind = 2
+		if len(m) > 1 && m[1] != "" {
+			if n, err := strconv.Atoi(m[1]); err == nil {
+				key.qualNum = n
+			}
+		}
+		return key
+	}
+	if m := regexp.MustCompile(`^alpha\.?([0-9]+)?$`).FindStringSubmatch(qualifier); m != nil {
+		key.kind = 3
+		if len(m) > 1 && m[1] != "" {
+			if n, err := strconv.Atoi(m[1]); err == nil {
+				key.qualNum = n
+			}
+		}
+		return key
+	}
+	if m := regexp.MustCompile(`\bb(\d+)\b`).FindStringSubmatch(qualifier); len(m) == 2 {
+		if n, err := strconv.Atoi(m[1]); err == nil {
+			key.kind = 4
+			key.qualNum = n
+			return key
+		}
+	}
+
+	return key
+}
+
+func compareReleaseSortKeyDesc(a, b releaseSortKey) int {
+	maxLen := len(a.parts)
+	if len(b.parts) > maxLen {
+		maxLen = len(b.parts)
+	}
+	for i := 0; i < maxLen; i++ {
+		av, bv := 0, 0
+		if i < len(a.parts) {
+			av = a.parts[i]
+		}
+		if i < len(b.parts) {
+			bv = b.parts[i]
+		}
+		if av > bv {
+			return -1
+		}
+		if av < bv {
+			return 1
+		}
+	}
+
+	if a.kind < b.kind {
+		return -1
+	}
+	if a.kind > b.kind {
+		return 1
+	}
+
+	if a.qualNum > b.qualNum {
+		return -1
+	}
+	if a.qualNum < b.qualNum {
+		return 1
+	}
+
+	return 0
+}
+
+func sortReleaseItemsByVersion(items []releaseItem) {
+	sort.SliceStable(items, func(i, j int) bool {
+		ki := parseReleaseSortKey(items[i].Version)
+		kj := parseReleaseSortKey(items[j].Version)
+		cmp := compareReleaseSortKeyDesc(ki, kj)
+		if cmp != 0 {
+			return cmp < 0
+		}
+		return strings.Compare(items[i].PublishedAt, items[j].PublishedAt) > 0
+	})
+}
+
 func resolveLatestReleaseByChannel(channel string) (string, error) {
 	normalizedChannel := normalizeReleaseChannel(channel)
 	releases, err := fetchGitHubReleases(50)
@@ -102,6 +250,7 @@ func resolveLatestReleaseByChannel(channel string) (string, error) {
 		return "", err
 	}
 
+	items := make([]releaseItem, 0, len(releases))
 	for _, r := range releases {
 		if r.Draft {
 			continue
@@ -110,12 +259,25 @@ func resolveLatestReleaseByChannel(channel string) (string, error) {
 		if tag == "" {
 			continue
 		}
-		if releaseChannelFromTag(tag) == normalizedChannel {
-			return tag, nil
+		itemChannel := releaseChannelFromTag(tag)
+		if itemChannel != normalizedChannel {
+			continue
 		}
+		items = append(items, releaseItem{
+			Version:     tag,
+			Name:        r.Name,
+			PublishedAt: r.PublishedAt,
+			Prerelease:  itemChannel == releaseChannelDev,
+			Channel:     itemChannel,
+		})
 	}
 
-	return "", fmt.Errorf("未找到%s版本号", releaseChannelLabel(normalizedChannel))
+	sortReleaseItemsByVersion(items)
+	if len(items) == 0 {
+		return "", fmt.Errorf("未找到%s版本号", releaseChannelLabel(normalizedChannel))
+	}
+
+	return items[0].Version, nil
 }
 
 func (h *Handler) nodeUpgrade(w http.ResponseWriter, r *http.Request) {
@@ -281,14 +443,6 @@ func (h *Handler) listReleases(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type releaseItem struct {
-		Version     string `json:"version"`
-		Name        string `json:"name"`
-		PublishedAt string `json:"publishedAt"`
-		Prerelease  bool   `json:"prerelease"`
-		Channel     string `json:"channel"`
-	}
-
 	items := make([]releaseItem, 0, len(releases))
 	for _, r := range releases {
 		if r.Draft {
@@ -311,6 +465,7 @@ func (h *Handler) listReleases(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	sortReleaseItemsByVersion(items)
 	response.WriteJSON(w, response.OK(items))
 }
 

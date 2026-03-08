@@ -258,11 +258,11 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* 用于给固定底部灵动岛腾出空间的占位元素 */}
-      <div aria-hidden className="h-[calc(var(--safe-area-bottom)+5.25rem)]" />
+      <div aria-hidden className="h-[5.9rem] md:h-[5rem]" />
 
       {/* 底部Tabbar（灵动岛样式） */}
-      <nav className="safe-bottom fixed bottom-0 left-0 right-0 px-4 pb-2 z-30 pointer-events-none">
-        <div className="h-[4.25rem] rounded-[24px] border border-white/45 dark:border-white/15 bg-white/60 dark:bg-black/38 backdrop-blur-xl shadow-[0_8px_24px_rgba(17,24,39,0.14)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.45)] px-2 pt-1.5 pb-[max(0.4rem,var(--safe-area-bottom))] flex items-center justify-around pointer-events-auto overflow-hidden [backdrop-filter:saturate(165%)_blur(18px)] [transform:translateZ(0)] [backface-visibility:hidden] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none px-3 md:px-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:pb-3">
+        <div className="mx-auto w-full max-w-[560px] h-[4.25rem] md:h-[3.9rem] rounded-[24px] border border-white/45 dark:border-white/15 bg-white/60 dark:bg-black/38 backdrop-blur-xl shadow-[0_8px_24px_rgba(17,24,39,0.14)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.45)] px-2 pt-1.5 pb-1.5 md:pb-1 flex items-center justify-around pointer-events-auto overflow-hidden [backdrop-filter:saturate(165%)_blur(18px)] [transform:translateZ(0)] [backface-visibility:hidden] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
           {filteredTabItems.map((item) => {
             const isActive = location.pathname === item.path;
 

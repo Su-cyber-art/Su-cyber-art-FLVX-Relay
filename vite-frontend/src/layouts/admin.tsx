@@ -323,7 +323,7 @@ export default function AdminLayout({
 
   return (
     <div
-      className={`flex ${isMobile ? "min-h-screen" : "h-screen"} bg-gray-100 dark:bg-black`}
+      className={`flex ${isMobile ? "min-h-[100dvh]" : "h-[100dvh] overflow-hidden"} bg-gray-100 dark:bg-black`}
     >
       {/* 移动端遮罩层 */}
       {isMobile && mobileMenuVisible && (
@@ -340,11 +340,11 @@ export default function AdminLayout({
         className={`
         ${isMobile ? "fixed" : "relative"}
         ${isMobile && !mobileMenuVisible ? "-translate-x-full" : "translate-x-0"}
-        ${isMobile ? "w-64" : isCollapsed ? "w-20" : "w-52"}
+        ${isMobile ? "w-64" : isCollapsed ? "w-20" : "w-36"}
         z-50
         transition-all duration-300 ease-in-out
         flex flex-col
-        ${isMobile ? "h-[calc(100vh-1.5rem)] top-3 left-3" : "h-[calc(100vh-1.5rem)] my-3 ml-3"}
+        ${isMobile ? "h-[calc(100dvh-1.5rem)] top-3 left-3" : "h-[calc(100dvh-1.5rem)] max-h-[calc(100dvh-1.5rem)] my-3 ml-3"}
         rounded-[28px]
         border border-white/45 dark:border-white/10
         bg-white/65 dark:bg-black/35
@@ -375,7 +375,7 @@ export default function AdminLayout({
 
         {/* 菜单导航 */}
         <nav
-          className={`flex-1 py-6 overflow-y-auto overflow-x-hidden no-scrollbar ${
+          className={`flex-1 py-4 overflow-y-auto overflow-x-hidden no-scrollbar ${
             !isMobile && isCollapsed ? "px-1" : "px-2"
           }`}
         >
@@ -487,7 +487,7 @@ export default function AdminLayout({
 
         {/* 底部仓库链接和折叠按钮 */}
         <div
-          className={`px-3 py-2 pb-4 mt-auto flex-shrink-0 overflow-hidden whitespace-nowrap box-border flex ${
+          className={`px-3 py-2 pb-3 mt-auto flex-shrink-0 overflow-hidden whitespace-nowrap box-border flex ${
             !isMobile && isCollapsed
               ? "flex-col items-center gap-2"
               : "items-center justify-between"
@@ -633,7 +633,7 @@ export default function AdminLayout({
 
       {/* 主内容区域 */}
       <div
-        className={`flex flex-col flex-1 ${isMobile ? "min-h-0" : "h-[calc(100vh-1.5rem)] overflow-hidden mt-3 mr-3 ml-3"}`}
+        className={`flex flex-col flex-1 ${isMobile ? "min-h-0" : "h-[calc(100dvh-1.5rem)] overflow-hidden mt-3 mr-3 ml-3"}`}
       >
         {isMobile && (
           <header className="relative z-10 flex h-14 items-center justify-between px-1">
@@ -730,7 +730,7 @@ export default function AdminLayout({
 
         {/* 主内容 */}
         <main
-          className={`flex-1 bg-gray-100 dark:bg-black overflow-y-auto rounded-[22px] border border-white/35 dark:border-white/10 ${
+          className={`flex-1 bg-gray-100 dark:bg-black overflow-y-auto overflow-x-hidden no-scrollbar rounded-[22px] border border-white/35 dark:border-white/10 ${
             isMobile ? "mt-2" : "mt-0"
           }`}
         >

@@ -89,31 +89,40 @@ const releaseChannelFromTag = (tag: string): ReleaseTagChannel => {
 
 type VersionParts = {
   numbers: number[];
-  stageRank: number;
+  stageRank: number; // stable(4) > rc(3) > beta/b(2) > alpha(1) > other(0)
   stageNumber: number;
 };
 
 const parseVersionParts = (version: string): VersionParts => {
   const normalized = normalizeTag(version).toLowerCase();
-  const numberMatches = normalized.match(/\d+/g) || [];
-  const numbers = numberMatches.map((item) => Number.parseInt(item, 10));
+  const [corePartRaw, ...suffixParts] = normalized.split("-");
+  const corePart = corePartRaw || "";
+  const suffix = suffixParts.join("-");
+
+  // 只用主版本号做数值比较，避免 2.1.9-b4 把 "4" 当成主版本位
+  const numbers = (corePart.match(/\d+/g) || []).map((item) =>
+    Number.parseInt(item, 10),
+  );
 
   let stageRank = 0;
 
-  if (normalized.includes("rc")) {
-    stageRank = 3;
-  } else if (normalized.includes("beta")) {
-    stageRank = 2;
-  } else if (normalized.includes("alpha")) {
-    stageRank = 1;
-  } else if (stableVersionPattern.test(normalized)) {
+  if (stableVersionPattern.test(normalized)) {
     stageRank = 4;
+  } else if (/(?:^|[.-])rc(?:[.-]?\d+)?(?:$|[.-])/i.test(suffix)) {
+    stageRank = 3;
+  } else if (
+    /(?:^|[.-])(?:beta|b)(?:[.-]?\d+)?(?:$|[.-])/i.test(suffix)
+  ) {
+    stageRank = 2;
+  } else if (/(?:^|[.-])alpha(?:[.-]?\d+)?(?:$|[.-])/i.test(suffix)) {
+    stageRank = 1;
   }
 
-  const stageNumberMatch = normalized.match(/(?:alpha|beta|rc)[.-]?(\d+)/);
-  const stageNumber = stageNumberMatch
-    ? Number.parseInt(stageNumberMatch[1], 10)
-    : 0;
+  const stageNumberMatch = suffix.match(/(?:alpha|beta|rc|\bb)(?:[.-]?(\d+))?/i);
+  const stageNumber =
+    stageNumberMatch && stageNumberMatch[1]
+      ? Number.parseInt(stageNumberMatch[1], 10)
+      : 0;
 
   return {
     numbers,

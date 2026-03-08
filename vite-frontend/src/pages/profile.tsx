@@ -34,6 +34,7 @@ interface MenuItem {
 }
 
 const PROFILE_AVATAR_KEY = "profile_avatar";
+const PROFILE_AVATAR_CACHE_KEY = "vite_config_profile_avatar";
 const BRAND_FILE_ACCEPT = "image/png,image/jpeg,image/webp,image/svg+xml";
 
 export default function ProfilePage() {
@@ -43,7 +44,11 @@ export default function ProfilePage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [adminMenuExpanded, setAdminMenuExpanded] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(() => {
+    if (typeof window === "undefined") return "";
+
+    return localStorage.getItem(PROFILE_AVATAR_CACHE_KEY) || "";
+  });
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -68,8 +73,14 @@ export default function ProfilePage() {
           response.data &&
           typeof response.data.value === "string"
         ) {
-          setAvatarUrl(response.data.value);
+          const nextAvatar = response.data.value;
+
+          setAvatarUrl(nextAvatar);
           setAvatarLoadFailed(false);
+
+          if (typeof window !== "undefined") {
+            localStorage.setItem(PROFILE_AVATAR_CACHE_KEY, nextAvatar);
+          }
         }
       } catch {
         // ignore avatar load error
@@ -147,6 +158,9 @@ export default function ProfilePage() {
       if (res.code === 0) {
         setAvatarUrl(pngDataURL);
         setAvatarLoadFailed(false);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(PROFILE_AVATAR_CACHE_KEY, pngDataURL);
+        }
         toast.success("头像上传成功");
       } else {
         toast.error(res.msg || "头像上传失败");
@@ -172,6 +186,9 @@ export default function ProfilePage() {
       if (res.code === 0) {
         setAvatarUrl("");
         setAvatarLoadFailed(false);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem(PROFILE_AVATAR_CACHE_KEY);
+        }
         toast.success("头像已清除");
       } else {
         toast.error(res.msg || "清除头像失败");

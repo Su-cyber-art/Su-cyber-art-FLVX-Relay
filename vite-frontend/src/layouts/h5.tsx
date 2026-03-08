@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/shadcn-bridge/heroui/button";
 import { BrandLogo } from "@/components/brand-logo";
@@ -147,10 +146,12 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
   const filteredTabItems = tabItems.filter(
     (item) => !item.adminOnly || isAdmin,
   );
+  const hideTopHeader = location.pathname === "/config";
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-black">
       {/* 顶部导航栏（胶囊样式，固定悬浮） */}
+      {!hideTopHeader && (
       <header className="safe-top fixed top-0 left-0 right-0 px-4 pt-2 pb-2 z-40 pointer-events-none overflow-visible">
         <div className="relative h-12 rounded-[22px] border border-white/45 dark:border-white/15 bg-white/55 dark:bg-black/35 backdrop-blur-xl shadow-[0_8px_24px_rgba(17,24,39,0.14)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.45)] flex items-center justify-between px-3 pointer-events-auto overflow-visible [backdrop-filter:saturate(165%)_blur(18px)] [transform:translateZ(0)] [backface-visibility:hidden] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
           <div className="flex items-center gap-2">
@@ -237,24 +238,16 @@ export default function H5Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
+      )}
 
       {/* 固定悬浮头部占位 */}
-      <div aria-hidden className="h-[calc(var(--safe-area-top)+4rem)]" />
+      {!hideTopHeader && (
+        <div aria-hidden className="h-[calc(var(--safe-area-top)+4rem)]" />
+      )}
 
       {/* 主内容区域 */}
       <main className="flex-1 bg-gray-100 dark:bg-black">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.34, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="min-h-full"
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
+        <div className="min-h-full">{children}</div>
       </main>
 
       {/* 用于给固定底部灵动岛腾出空间的占位元素 */}

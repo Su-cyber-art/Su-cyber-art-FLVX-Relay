@@ -281,7 +281,7 @@ export default function ProfilePage() {
         <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
           <CardBody className="p-4 space-y-4">
             <div className="relative">
-              <div className="absolute right-0 top-0 flex items-center gap-1.5 opacity-80">
+              <div className="absolute right-0 top-1.5 flex items-center gap-1.5 opacity-80">
                 {isAdmin && (
                   <Button
                     isIconOnly
@@ -330,7 +330,7 @@ export default function ProfilePage() {
                 </Button>
               </div>
 
-              <div className="flex items-start space-x-4 pr-18">
+              <div className="flex items-start space-x-4 pr-24 pt-1">
                 <input
                   ref={avatarInputRef}
                   accept={BRAND_FILE_ACCEPT}
@@ -342,7 +342,7 @@ export default function ProfilePage() {
                 />
                 <div className="relative">
                   <button
-                    className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center overflow-hidden border border-primary-200/60 dark:border-primary-400/30 hover:opacity-90 transition-opacity"
+                    className="w-14 h-14 bg-slate-200 dark:bg-slate-700/60 rounded-full flex items-center justify-center overflow-hidden border border-slate-300/70 dark:border-slate-500/40 hover:opacity-90 transition-opacity"
                     title="上传头像"
                     type="button"
                     onClick={triggerAvatarPicker}
@@ -357,7 +357,7 @@ export default function ProfilePage() {
                       />
                     ) : (
                       <svg
-                        className="w-7 h-7 text-primary"
+                        className="w-7 h-7 text-slate-500 dark:text-slate-300"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -378,7 +378,7 @@ export default function ProfilePage() {
                     <span
                       className={`px-2 py-1 rounded-md text-xs font-medium ${
                         isAdmin
-                          ? "bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300"
+                          ? "bg-violet-100 dark:bg-violet-500/20 text-violet-800 dark:text-violet-300"
                           : "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300"
                       }`}
                     >
@@ -400,10 +400,10 @@ export default function ProfilePage() {
                       {avatarUrl ? "替换头像" : "上传头像"}
                     </Button>
                     <Button
-                      className="h-8"
+                      className="h-8 bg-slate-100/95 text-slate-600 border border-slate-200 hover:bg-slate-200/80 dark:bg-slate-700/60 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-700/80"
                       isDisabled={!avatarUrl || avatarUploading}
                       size="sm"
-                      variant="light"
+                      variant="flat"
                       onPress={() => {
                         void clearAvatar();
                       }}
@@ -423,11 +423,11 @@ export default function ProfilePage() {
                   {adminMenuItems.map((item) => (
                     <button
                       key={item.path}
-                      className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
+                      className="flex flex-col items-center p-2.5 rounded-[24px] bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
                       onClick={() => navigate(item.path)}
                     >
                       <div
-                        className={`w-10 h-10 ${item.color} rounded-full flex items-center justify-center mb-2`}
+                        className={`w-9 h-9 ${item.color} rounded-full flex items-center justify-center mb-1.5`}
                       >
                         {item.icon}
                       </div>

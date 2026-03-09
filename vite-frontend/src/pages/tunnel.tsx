@@ -74,6 +74,7 @@ import {
   Trash2,
   CircleX,
   Pencil,
+  Info,
 } from "lucide-react";
 
 interface ChainTunnel {
@@ -147,6 +148,8 @@ export default function TunnelPage() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [diagnosisLoading, setDiagnosisLoading] = useState(false);
   const [tunnelToDelete, setTunnelToDelete] = useState<Tunnel | null>(null);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [detailTunnel, setDetailTunnel] = useState<Tunnel | null>(null);
   const [currentDiagnosisTunnel, setCurrentDiagnosisTunnel] =
     useState<Tunnel | null>(null);
   const [diagnosisResult, setDiagnosisResult] =
@@ -326,6 +329,19 @@ export default function TunnelPage() {
   const handleDelete = (tunnel: Tunnel) => {
     setTunnelToDelete(tunnel);
     setDeleteModalOpen(true);
+  };
+
+  // 查看隧道详情
+  const handleShowDetail = (tunnel: Tunnel) => {
+    setDetailTunnel(tunnel);
+    setDetailModalOpen(true);
+  };
+
+  const getNodeNameById = (nodeId?: number) => {
+    if (!nodeId) return "-";
+    const node = nodes.find((item) => item.id === nodeId);
+
+    return node?.name || `#${nodeId}`;
   };
 
   const confirmDelete = async () => {
@@ -1076,7 +1092,7 @@ export default function TunnelPage() {
                     {(listeners) => (
                       <Card
                         key={tunnel.id}
-                        className="group shadow-sm border border-divider hover:shadow-md transition-shadow duration-200 overflow-hidden"
+                        className="group h-full flex flex-col shadow-sm border border-divider hover:shadow-md transition-shadow duration-200 overflow-hidden"
                       >
                         <CardHeader className="pb-2 md:pb-2">
                           <div className="flex justify-between items-start w-full">
@@ -1115,8 +1131,8 @@ export default function TunnelPage() {
                           </div>
                         </CardHeader>
 
-                        <CardBody className="pt-0 pb-3 md:pt-0 md:pb-3">
-                          <div className="space-y-3">
+                        <CardBody className="flex flex-1 flex-col pt-0 pb-3 md:pt-0 md:pb-3">
+                          <div className="space-y-3 flex-1">
                             {/* 拓扑结构 */}
                             <div className="pt-2 border-t border-divider">
                               <div className="flex items-center justify-center gap-2 text-xs">
@@ -1158,44 +1174,11 @@ export default function TunnelPage() {
                               </div>
                             </div>
 
-                            {/* 流量配置 */}
-                            <div
-                              className={`grid gap-2 ${tunnel.type === 2 && tunnel.ipPreference ? "grid-cols-3" : "grid-cols-2"}`}
-                            >
-                              <div className="text-center p-1.5 bg-default-50 dark:bg-default-100/30 rounded">
-                                <div className="text-xs text-default-500">
-                                  流量计算
-                                </div>
-                                <div className="text-sm font-semibold text-foreground mt-0.5">
-                                  {getTunnelFlowDisplay(tunnel.flow)}
-                                </div>
-                              </div>
-                              <div className="text-center p-1.5 bg-default-50 dark:bg-default-100/30 rounded">
-                                <div className="text-xs text-default-500">
-                                  流量倍率
-                                </div>
-                                <div className="text-sm font-semibold text-foreground mt-0.5">
-                                  {tunnel.trafficRatio}x
-                                </div>
-                              </div>
-                              {tunnel.type === 2 && tunnel.ipPreference && (
-                                <div className="text-center p-1.5 bg-default-50 dark:bg-default-100/30 rounded">
-                                  <div className="text-xs text-default-500">
-                                    连接偏好
-                                  </div>
-                                  <div className="text-sm font-semibold text-foreground mt-0.5">
-                                    {tunnel.ipPreference === "v4"
-                                      ? "IPv4"
-                                      : "IPv6"}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
                           </div>
 
-                          <div className="flex gap-1.5 mt-3">
+                          <div className="grid grid-cols-2 gap-1.5 mt-3">
                             <Button
-                              className="flex-1 min-h-8"
+                              className="min-h-8"
                               color="primary"
                               size="sm"
                               startContent={
@@ -1207,7 +1190,19 @@ export default function TunnelPage() {
                               编辑
                             </Button>
                             <Button
-                              className="flex-1 min-h-8"
+                              className="min-h-8"
+                              color="secondary"
+                              size="sm"
+                              startContent={
+                                <Info className="w-3 h-3" />
+                              }
+                              variant="flat"
+                              onPress={() => handleShowDetail(tunnel)}
+                            >
+                              详情
+                            </Button>
+                            <Button
+                              className="min-h-8"
                               color="warning"
                               size="sm"
                               startContent={
@@ -1219,7 +1214,7 @@ export default function TunnelPage() {
                               诊断
                             </Button>
                             <Button
-                              className="flex-1 min-h-8"
+                              className="min-h-8"
                               color="danger"
                               size="sm"
                               startContent={
@@ -2199,6 +2194,124 @@ export default function TunnelPage() {
                     : isEdit
                       ? "更新"
                       : "创建"}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* 隧道详情模态框 */}
+      <Modal
+        backdrop="blur"
+        isOpen={detailModalOpen}
+        placement="center"
+        scrollBehavior="inside"
+        size="2xl"
+        onOpenChange={setDetailModalOpen}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                <h2 className="text-xl font-bold">隧道详情</h2>
+                <p className="text-small text-default-500">
+                  {detailTunnel?.name || "-"}
+                </p>
+              </ModalHeader>
+              <ModalBody>
+                {detailTunnel ? (
+                  <div className="space-y-4 text-sm">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-md bg-default-50 dark:bg-default-100/20 p-2">
+                        <div className="text-xs text-default-500">隧道类型</div>
+                        <div className="font-semibold mt-1">
+                          {getTunnelTypeDisplay(detailTunnel.type).text}
+                        </div>
+                      </div>
+                      <div className="rounded-md bg-default-50 dark:bg-default-100/20 p-2">
+                        <div className="text-xs text-default-500">流量计算</div>
+                        <div className="font-semibold mt-1">
+                          {getTunnelFlowDisplay(detailTunnel.flow)}
+                        </div>
+                      </div>
+                      <div className="rounded-md bg-default-50 dark:bg-default-100/20 p-2">
+                        <div className="text-xs text-default-500">流量倍率</div>
+                        <div className="font-semibold mt-1">{detailTunnel.trafficRatio}x</div>
+                      </div>
+                      <div className="rounded-md bg-default-50 dark:bg-default-100/20 p-2">
+                        <div className="text-xs text-default-500">连接偏好</div>
+                        <div className="font-semibold mt-1">
+                          {detailTunnel.type === 2 && detailTunnel.ipPreference
+                            ? detailTunnel.ipPreference === "v4"
+                              ? "IPv4"
+                              : "IPv6"
+                            : "-"}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-md border border-divider p-3">
+                      <div className="text-xs text-default-500 mb-2">入口节点</div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {(detailTunnel.inNodeId || []).length > 0 ? (
+                          detailTunnel.inNodeId.map((item, idx) => (
+                            <Chip key={`detail-in-${item.nodeId}-${idx}`} size="sm" variant="flat">
+                              {getNodeNameById(item.nodeId)}
+                            </Chip>
+                          ))
+                        ) : (
+                          <span className="text-default-400">-</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {detailTunnel.type === 2 && (
+                      <>
+                        <div className="rounded-md border border-divider p-3">
+                          <div className="text-xs text-default-500 mb-2">转发链</div>
+                          <div className="space-y-2">
+                            {(detailTunnel.chainNodes || []).length > 0 ? (
+                              (detailTunnel.chainNodes || []).map((group, groupIdx) => (
+                                <div key={`detail-chain-${groupIdx}`} className="rounded bg-default-50 dark:bg-default-100/20 p-2">
+                                  <div className="text-xs text-default-500 mb-1">第 {groupIdx + 1} 跳</div>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {group.map((item, idx) => (
+                                      <Chip key={`detail-chain-node-${groupIdx}-${item.nodeId}-${idx}`} size="sm" variant="flat">
+                                        {getNodeNameById(item.nodeId)}
+                                      </Chip>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <span className="text-default-400">-</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="rounded-md border border-divider p-3">
+                          <div className="text-xs text-default-500 mb-2">出口节点</div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(detailTunnel.outNodeId || []).length > 0 ? (
+                              (detailTunnel.outNodeId || []).map((item, idx) => (
+                                <Chip key={`detail-out-${item.nodeId}-${idx}`} size="sm" variant="flat">
+                                  {getNodeNameById(item.nodeId)}
+                                </Chip>
+                              ))
+                            ) : (
+                              <span className="text-default-400">-</span>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : null}
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  关闭
                 </Button>
               </ModalFooter>
             </>

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"strconv"
 	"strings"
@@ -43,6 +44,11 @@ func (h *Handler) processFlowItem(nodeID int64, item flowItem) {
 	if ok {
 		inFlow, outFlow := h.scaleFlowByTunnel(forwardID, item.D, item.U)
 		_ = h.repo.AddFlow(forwardID, userID, userTunnelID, inFlow, outFlow)
+		if forward, err := h.getForwardRecord(forwardID); err == nil && forward != nil {
+			if quota, quotaErr := h.repo.AddTunnelQuotaUsage(forward.TunnelID, inFlow+outFlow, time.Now()); quotaErr == nil {
+				h.enforceTunnelQuotaIfNeeded(forward.TunnelID, quota)
+			}
+		}
 		h.processPeerShareFlowFromForward(forwardID, nodeID, serviceName, item)
 
 		if userTunnelID > 0 {
@@ -325,6 +331,70 @@ func (h *Handler) enforceFlowPolicies(userID int64, userTunnelID int64) {
 	if shouldPauseUserTunnel(policy, now) {
 		h.pauseUserTunnelForwards(policy.UserID, policy.TunnelID, now)
 	}
+}
+
+func (h *Handler) ensureUserTunnelForwardAllowed(userID int64, tunnelID int64, now int64) error {
+	if h == nil || h.repo == nil {
+		return errors.New("invalid flow policy context")
+	}
+	if userID <= 0 || tunnelID <= 0 {
+		return nil
+	}
+
+	user, err := h.repo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return errors.New("用户不存在")
+	}
+
+	if user.Status != 1 {
+		return errors.New("账号已禁用")
+	}
+	if user.ExpTime > 0 && user.ExpTime <= now {
+		return errors.New("账号已过期")
+	}
+
+	flowLimit := user.Flow * bytesPerGB
+	current := user.InFlow + user.OutFlow
+	if flowLimit < current {
+		return errors.New("流量已超额，禁止开启转发")
+	}
+	if err := h.ensureTunnelForwardAllowedByQuota(tunnelID, now); err != nil {
+		return err
+	}
+
+	userTunnelID, _, _, err := h.resolveUserTunnelAndLimiter(userID, tunnelID)
+	if err != nil {
+		return err
+	}
+	if userTunnelID <= 0 {
+		return nil
+	}
+
+	policy, err := h.getUserTunnelPolicy(userTunnelID)
+	if err != nil {
+		return err
+	}
+	if policy == nil {
+		return nil
+	}
+
+	if policy.Status != 1 {
+		return errors.New("该隧道已禁用")
+	}
+	if policy.ExpTime > 0 && policy.ExpTime <= now {
+		return errors.New("该隧道已过期")
+	}
+
+	utFlowLimit := policy.Flow * bytesPerGB
+	utCurrent := policy.InFlow + policy.OutFlow
+	if utCurrent >= utFlowLimit {
+		return errors.New("该隧道流量已超额，禁止开启转发")
+	}
+
+	return nil
 }
 
 func (h *Handler) shouldPauseUser(userID int64, now int64) bool {

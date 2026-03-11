@@ -479,6 +479,8 @@ func (h *Handler) tunnelCreate(w http.ResponseWriter, r *http.Request) {
 
 	typeVal := asInt(req["type"], 1)
 	flow := asInt64(req["flow"], 1)
+	dailyQuotaGB := asInt64(req["dailyQuotaGB"], 0)
+	monthlyQuotaGB := asInt64(req["monthlyQuotaGB"], 0)
 	status := asInt(req["status"], 1)
 	trafficRatio := asFloat(req["trafficRatio"], 1.0)
 	inIP := asString(req["inIp"])
@@ -574,6 +576,10 @@ func (h *Handler) tunnelCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tunnelID := tunnel.ID
+	if err := h.repo.SaveTunnelQuotaConfigTx(tx, tunnelID, dailyQuotaGB, monthlyQuotaGB, now); err != nil {
+		response.WriteJSON(w, response.Err(-2, err.Error()))
+		return
+	}
 	runtimeState.TunnelID = tunnelID
 	var federationBindings []repo.FederationTunnelBinding
 	var federationReleaseRefs []federationRuntimeReleaseRef
@@ -684,6 +690,8 @@ func (h *Handler) tunnelUpdate(w http.ResponseWriter, r *http.Request) {
 
 	now := time.Now().UnixMilli()
 	typeVal := asInt(req["type"], 1)
+	dailyQuotaGB := asInt64(req["dailyQuotaGB"], 0)
+	monthlyQuotaGB := asInt64(req["monthlyQuotaGB"], 0)
 	ipPreference := asString(req["ipPreference"])
 	localDomain := h.federationLocalDomain()
 
@@ -725,6 +733,10 @@ func (h *Handler) tunnelUpdate(w http.ResponseWriter, r *http.Request) {
 		ipPreference,
 		now,
 	); err != nil {
+		response.WriteJSON(w, response.Err(-2, err.Error()))
+		return
+	}
+	if err := h.repo.SaveTunnelQuotaConfigTx(tx, id, dailyQuotaGB, monthlyQuotaGB, now); err != nil {
 		response.WriteJSON(w, response.Err(-2, err.Error()))
 		return
 	}
@@ -1146,6 +1158,10 @@ func (h *Handler) forwardCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if tunnel.Status != 1 {
+		if reason, quotaErr := h.tunnelQuotaBlockReason(tunnelID, time.Now().UnixMilli()); quotaErr == nil && reason != "" {
+			response.WriteJSON(w, response.ErrDefault(reason))
+			return
+		}
 		response.WriteJSON(w, response.ErrDefault("隧道已禁用，无法创建转发"))
 		return
 	}
@@ -1263,6 +1279,10 @@ func (h *Handler) forwardUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if tunnel.Status != 1 {
+		if reason, quotaErr := h.tunnelQuotaBlockReason(tunnelID, time.Now().UnixMilli()); quotaErr == nil && reason != "" {
+			response.WriteJSON(w, response.ErrDefault(reason))
+			return
+		}
 		response.WriteJSON(w, response.ErrDefault("隧道已禁用，无法更新转发"))
 		return
 	}

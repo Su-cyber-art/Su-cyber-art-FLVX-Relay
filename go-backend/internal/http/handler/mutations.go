@@ -1458,11 +1458,16 @@ func (h *Handler) forwardResume(w http.ResponseWriter, r *http.Request) {
 		response.WriteJSON(w, response.Err(-2, err.Error()))
 		return
 	}
+	now := time.Now().UnixMilli()
+	if err := h.ensureUserTunnelForwardAllowed(forward.UserID, forward.TunnelID, now); err != nil {
+		response.WriteJSON(w, response.ErrDefault(err.Error()))
+		return
+	}
 	if err := h.controlForwardServices(forward, "ResumeService", false); err != nil {
 		response.WriteJSON(w, response.ErrDefault(err.Error()))
 		return
 	}
-	_ = h.repo.UpdateForwardStatus(id, 1, time.Now().UnixMilli())
+	_ = h.repo.UpdateForwardStatus(id, 1, now)
 	response.WriteJSON(w, response.OKEmpty())
 }
 
@@ -1591,11 +1596,16 @@ func (h *Handler) forwardBatchResume(w http.ResponseWriter, r *http.Request) {
 			f++
 			continue
 		}
+		now := time.Now().UnixMilli()
+		if err := h.ensureUserTunnelForwardAllowed(forward.UserID, forward.TunnelID, now); err != nil {
+			f++
+			continue
+		}
 		if err := h.controlForwardServices(forward, "ResumeService", false); err != nil {
 			f++
 			continue
 		}
-		if err := h.repo.UpdateForwardStatus(id, 1, time.Now().UnixMilli()); err != nil {
+		if err := h.repo.UpdateForwardStatus(id, 1, now); err != nil {
 			f++
 		} else {
 			s++

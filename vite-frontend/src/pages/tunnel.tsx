@@ -137,14 +137,6 @@ interface TunnelForm {
   status: number;
 }
 
-interface BatchProgressState {
-  active: boolean;
-  label: string;
-  percent: number;
-}
-
-const TUNNEL_ORDER_KEY = "tunnel-order";
-
 const formatBytes = (bytes?: number) => {
   const value = Number(bytes ?? 0);
 
@@ -171,26 +163,6 @@ const formatQuotaLimit = (value?: number) => {
   return `${limit} GB`;
 };
 
-const mapTunnelApiItems = (items: any[]): Tunnel[] => {
-  return (items || []).map((tunnel) => ({
-    ...tunnel,
-    inx: tunnel.inx ?? 0,
-    inNodeId: Array.isArray(tunnel.inNodeId) ? tunnel.inNodeId : [],
-    outNodeId: Array.isArray(tunnel.outNodeId) ? tunnel.outNodeId : [],
-    chainNodes: Array.isArray(tunnel.chainNodes) ? tunnel.chainNodes : [],
-    inIp: tunnel.inIp || "",
-    flow: tunnel.flow ?? 1,
-    trafficRatio: tunnel.trafficRatio ?? 1,
-    dailyQuotaGB: tunnel.dailyQuotaGB ?? 0,
-    monthlyQuotaGB: tunnel.monthlyQuotaGB ?? 0,
-    dailyUsedBytes: tunnel.dailyUsedBytes ?? 0,
-    monthlyUsedBytes: tunnel.monthlyUsedBytes ?? 0,
-    disabledByQuota: tunnel.disabledByQuota ?? 0,
-    quotaDisabledAt: tunnel.quotaDisabledAt ?? 0,
-    status: typeof tunnel.status === "number" ? tunnel.status : 0,
-    createdTime: tunnel.createdTime || "",
-  }));
-};
 export default function TunnelPage() {
   const [loading, setLoading] = useState(true);
   const [tunnels, setTunnels] = useState<Tunnel[]>([]);
@@ -448,7 +420,7 @@ export default function TunnelPage() {
 
       if (response.code === 0) {
         toast.success("隧道配额已重置");
-        await refreshTunnelList(false);
+        await loadData();
       } else {
         toast.error(response.msg || "重置隧道配额失败");
       }

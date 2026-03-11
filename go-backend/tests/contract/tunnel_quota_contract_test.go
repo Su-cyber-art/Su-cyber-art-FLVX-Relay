@@ -13,6 +13,8 @@ import (
 	"go-backend/internal/http/response"
 )
 
+const contractBytesPerGB int64 = 1024 * 1024 * 1024
+
 func TestForwardCreateBlockedWhenTunnelQuotaExceeded(t *testing.T) {
 	secret := "contract-jwt-secret"
 	router, repo := setupContractRouter(t, secret)

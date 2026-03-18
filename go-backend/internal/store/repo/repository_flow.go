@@ -161,6 +161,61 @@ func (r *Repository) ForwardExists(forwardID int64) (bool, error) {
 	return count > 0, nil
 }
 
+func (r *Repository) MapForwardIDsToTunnelIDs(forwardIDs []int64) (map[int64]int64, error) {
+	if r == nil || r.db == nil {
+		return nil, errors.New("repository not initialized")
+	}
+	if len(forwardIDs) == 0 {
+		return map[int64]int64{}, nil
+	}
+
+	ids := make([]int64, 0, len(forwardIDs))
+	seen := make(map[int64]struct{}, len(forwardIDs))
+	for _, id := range forwardIDs {
+		if id <= 0 {
+			continue
+		}
+		if _, ok := seen[id]; ok {
+			continue
+		}
+		seen[id] = struct{}{}
+		ids = append(ids, id)
+	}
+	if len(ids) == 0 {
+		return map[int64]int64{}, nil
+	}
+
+	type row struct {
+		ID       int64 `gorm:"column:id"`
+		TunnelID int64 `gorm:"column:tunnel_id"`
+	}
+
+	out := make(map[int64]int64, len(ids))
+	const chunkSize = 500
+	for start := 0; start < len(ids); start += chunkSize {
+		end := start + chunkSize
+		if end > len(ids) {
+			end = len(ids)
+		}
+
+		var rows []row
+		if err := r.db.Model(&model.Forward{}).
+			Select("id", "tunnel_id").
+			Where("id IN ?", ids[start:end]).
+			Find(&rows).Error; err != nil {
+			return nil, err
+		}
+		for _, row := range rows {
+			if row.ID <= 0 || row.TunnelID <= 0 {
+				continue
+			}
+			out[row.ID] = row.TunnelID
+		}
+	}
+
+	return out, nil
+}
+
 func (r *Repository) SpeedLimitExists(id int64) (bool, error) {
 	if r == nil || r.db == nil {
 		return false, errors.New("repository not initialized")

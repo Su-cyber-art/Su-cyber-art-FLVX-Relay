@@ -33,7 +33,7 @@ func TestSelectTunnelDialHost_ConnectIpPriority(t *testing.T) {
 func TestBuildTunnelChainServiceConfig_UsesConnectIPForListen(t *testing.T) {
 	node := &nodeRecord{TCPListenAddr: "[::]"}
 	chain := tunnelRuntimeNode{Protocol: "tls", Port: 21000, ConnectIP: "2001:db8::88"}
-	services := buildTunnelChainServiceConfig(99, chain, node)
+	services := buildTunnelChainServiceConfig(99, chain, node, 1)
 	if len(services) != 1 {
 		t.Fatalf("expected 1 service, got %d", len(services))
 	}
@@ -46,7 +46,7 @@ func TestBuildTunnelChainServiceConfig_UsesConnectIPForListen(t *testing.T) {
 func TestBuildTunnelChainServiceConfig_FallsBackToNodeListenAddr(t *testing.T) {
 	node := &nodeRecord{TCPListenAddr: "10.8.0.5"}
 	chain := tunnelRuntimeNode{Protocol: "tls", Port: 21002}
-	services := buildTunnelChainServiceConfig(99, chain, node)
+	services := buildTunnelChainServiceConfig(99, chain, node, 1)
 	if len(services) != 1 {
 		t.Fatalf("expected 1 service, got %d", len(services))
 	}
@@ -59,7 +59,7 @@ func TestBuildTunnelChainServiceConfig_FallsBackToNodeListenAddr(t *testing.T) {
 func TestBuildTunnelChainServiceConfig_DefaultListenAddrWhenConnectIPEmpty(t *testing.T) {
 	node := &nodeRecord{TCPListenAddr: "[::]"}
 	chain := tunnelRuntimeNode{Protocol: "tls", Port: 21001}
-	services := buildTunnelChainServiceConfig(99, chain, node)
+	services := buildTunnelChainServiceConfig(99, chain, node, 1)
 	if len(services) != 1 {
 		t.Fatalf("expected 1 service, got %d", len(services))
 	}

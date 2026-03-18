@@ -916,6 +916,148 @@ func TestForwardCreateThenPauseResumeContract(t *testing.T) {
 	}
 }
 
+func TestForwardBlockedWhenFlowExceededContract(t *testing.T) {
+	secret := "contract-jwt-secret-flow-block"
+	router, repo := setupContractRouter(t, secret)
+	server := httptest.NewServer(router)
+	defer server.Close()
+
+	now := time.Now().UnixMilli()
+	if err := repo.DB().Exec(`
+		INSERT INTO user(id, user, pwd, role_id, exp_time, flow, in_flow, out_flow, flow_reset_time, num, created_time, updated_time, status)
+		VALUES(2, 'flow_block_user', 'pwd', 1, 2727251700000, 1, 1073741824, 1, 1, 99999, ?, ?, 1)
+	`, now, now).Error; err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+
+	if err := repo.DB().Exec(`
+		INSERT INTO tunnel(id, name, traffic_ratio, type, protocol, flow, created_time, updated_time, status, in_ip, inx)
+		VALUES(701, 'flow-block-tunnel', 1.0, 1, 'tls', 99999, ?, ?, 1, NULL, 0)
+	`, now, now).Error; err != nil {
+		t.Fatalf("insert tunnel: %v", err)
+	}
+	tunnelID := int64(701)
+
+	if err := repo.DB().Exec(`
+		INSERT INTO node(id, name, secret, server_ip, server_ip_v4, server_ip_v6, port, interface_name, version, http, tls, socks, created_time, updated_time, status, tcp_listen_addr, udp_listen_addr, inx)
+		VALUES(801, 'flow-block-node', 'flow-block-secret', '10.51.0.1', '10.51.0.1', '', '51000-51010', '', 'v1', 1, 1, 1, ?, ?, 1, '[::]', '[::]', 0)
+	`, now, now).Error; err != nil {
+		t.Fatalf("insert node: %v", err)
+	}
+	if err := repo.DB().Exec(`
+		INSERT INTO chain_tunnel(tunnel_id, chain_type, node_id, port, strategy, inx, protocol)
+		VALUES(?, 1, 801, 51001, 'round', 1, 'tls')
+	`, tunnelID).Error; err != nil {
+		t.Fatalf("insert chain_tunnel: %v", err)
+	}
+	if err := repo.DB().Exec(`
+		INSERT INTO user_tunnel(id, user_id, tunnel_id, speed_id, num, flow, in_flow, out_flow, flow_reset_time, exp_time, status)
+		VALUES(901, 2, ?, NULL, 10, 99999, 0, 0, 1, 2727251700000, 1)
+	`, tunnelID).Error; err != nil {
+		t.Fatalf("insert user_tunnel: %v", err)
+	}
+
+	userToken, err := auth.GenerateToken(2, "flow_block_user", 1, secret)
+	if err != nil {
+		t.Fatalf("generate user token: %v", err)
+	}
+	stopNode := startMockNodeSession(t, server.URL, "flow-block-secret")
+	defer stopNode()
+
+	t.Run("create is blocked when user flow exceeded", func(t *testing.T) {
+		createPayload := map[string]interface{}{
+			"name":       "flow-block-create",
+			"tunnelId":   tunnelID,
+			"remoteAddr": "1.2.3.4:443",
+			"strategy":   "fifo",
+		}
+		createBody, err := json.Marshal(createPayload)
+		if err != nil {
+			t.Fatalf("marshal create payload: %v", err)
+		}
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/forward/create", bytes.NewReader(createBody))
+		req.Header.Set("Authorization", userToken)
+		req.Header.Set("Content-Type", "application/json")
+		res := httptest.NewRecorder()
+		router.ServeHTTP(res, req)
+		assertCodeMsg(t, res, -1, "流量已超额，禁止开启转发")
+	})
+
+	if err := repo.DB().Exec(`UPDATE user SET in_flow = 0, out_flow = 0 WHERE id = 2`).Error; err != nil {
+		t.Fatalf("reset user flow: %v", err)
+	}
+
+	createPayload := map[string]interface{}{
+		"name":       "flow-block-existing",
+		"tunnelId":   tunnelID,
+		"remoteAddr": "2.3.4.5:443",
+		"strategy":   "fifo",
+	}
+	createBody, err := json.Marshal(createPayload)
+	if err != nil {
+		t.Fatalf("marshal create payload: %v", err)
+	}
+	createReq := httptest.NewRequest(http.MethodPost, "/api/v1/forward/create", bytes.NewReader(createBody))
+	createReq.Header.Set("Authorization", userToken)
+	createReq.Header.Set("Content-Type", "application/json")
+	createRes := httptest.NewRecorder()
+	router.ServeHTTP(createRes, createReq)
+	assertCode(t, createRes, 0)
+	forwardID := mustLastInsertID(t, repo, "flow-block-existing")
+
+	pauseBody, err := json.Marshal(map[string]interface{}{"id": forwardID})
+	if err != nil {
+		t.Fatalf("marshal pause payload: %v", err)
+	}
+	pauseReq := httptest.NewRequest(http.MethodPost, "/api/v1/forward/pause", bytes.NewReader(pauseBody))
+	pauseReq.Header.Set("Authorization", userToken)
+	pauseReq.Header.Set("Content-Type", "application/json")
+	pauseRes := httptest.NewRecorder()
+	router.ServeHTTP(pauseRes, pauseReq)
+	assertCode(t, pauseRes, 0)
+
+	if err := repo.DB().Exec(`UPDATE user SET in_flow = 1073741824, out_flow = 1 WHERE id = 2`).Error; err != nil {
+		t.Fatalf("exceed user flow: %v", err)
+	}
+
+	t.Run("resume is blocked when user flow exceeded", func(t *testing.T) {
+		resumeBody, err := json.Marshal(map[string]interface{}{"id": forwardID})
+		if err != nil {
+			t.Fatalf("marshal resume payload: %v", err)
+		}
+		resumeReq := httptest.NewRequest(http.MethodPost, "/api/v1/forward/resume", bytes.NewReader(resumeBody))
+		resumeReq.Header.Set("Authorization", userToken)
+		resumeReq.Header.Set("Content-Type", "application/json")
+		resumeRes := httptest.NewRecorder()
+		router.ServeHTTP(resumeRes, resumeReq)
+		assertCodeMsg(t, resumeRes, -1, "流量已超额，禁止开启转发")
+	})
+
+	t.Run("batch resume counts blocked forward as failure", func(t *testing.T) {
+		body := bytes.NewBufferString(`{"ids":[` + jsonNumber(forwardID) + `]}`)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/forward/batch-resume", body)
+		req.Header.Set("Authorization", userToken)
+		req.Header.Set("Content-Type", "application/json")
+		res := httptest.NewRecorder()
+		router.ServeHTTP(res, req)
+
+		var out response.R
+		if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		if out.Code != 0 {
+			t.Fatalf("expected code 0, got %d (%s)", out.Code, out.Msg)
+		}
+		data, ok := out.Data.(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected object data, got %T", out.Data)
+		}
+		if int(data["successCount"].(float64)) != 0 || int(data["failCount"].(float64)) != 1 {
+			t.Fatalf("expected success=0 fail=1, got %v", data)
+		}
+	})
+}
+
 func TestForwardUpdateRecoversFromAddressInUseContract(t *testing.T) {
 	secret := "contract-jwt-secret"
 	router, repo := setupContractRouter(t, secret)

@@ -7,6 +7,7 @@ import DashboardPage from "@/pages/dashboard";
 import ForwardPage from "@/pages/forward";
 import TunnelPage from "@/pages/tunnel";
 import NodePage from "@/pages/node";
+import MonitorPage from "@/pages/monitor";
 import UserPage from "@/pages/user";
 import GroupPage from "@/pages/group";
 import ProfilePage from "@/pages/profile";
@@ -145,6 +146,14 @@ function App() {
           </ProtectedRoute>
         }
         path="/node"
+      />
+      <Route
+        element={
+          <ProtectedRoute>
+            <MonitorPage />
+          </ProtectedRoute>
+        }
+        path="/monitor"
       />
       <Route
         element={

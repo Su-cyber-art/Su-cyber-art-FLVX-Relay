@@ -131,6 +131,16 @@ export default function AdminLayout({
       adminOnly: true,
     },
     {
+      path: "/monitor",
+      label: "监控",
+      icon: (
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M3 3a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1h-3.382a1 1 0 01-.894-.553L10.5 13H9l-1.224 2.447a1 1 0 01-.894.553H4a1 1 0 01-1-1V3zm3 8a1 1 0 102 0 1 1 0 00-2 0zm3-3a1 1 0 100 2 1 1 0 000-2zm3-2a1 1 0 102 0 1 1 0 00-2 0z" />
+        </svg>
+      ),
+      adminOnly: true,
+    },
+    {
       path: "/limit",
       label: "限速",
       icon: (

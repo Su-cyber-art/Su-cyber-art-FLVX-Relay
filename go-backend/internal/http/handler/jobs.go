@@ -18,11 +18,13 @@ func (h *Handler) StartBackgroundJobs() {
 	ctx, cancel := context.WithCancel(context.Background())
 	h.jobsCancel = cancel
 	h.jobsStarted = true
-	h.jobsWG.Add(2)
+	h.jobsWG.Add(4)
 	h.jobsMu.Unlock()
 
 	go h.runHourlyStatsLoop(ctx)
 	go h.runDailyMaintenanceLoop(ctx)
+	go h.runMetricsIngestion(ctx)
+	go h.runHealthChecks(ctx)
 }
 
 func (h *Handler) StopBackgroundJobs() {
@@ -79,6 +81,20 @@ func (h *Handler) runDailyMaintenanceLoop(ctx context.Context) {
 		case <-timer.C:
 			h.runResetAndExpiryJob(time.Now())
 		}
+	}
+}
+
+func (h *Handler) runMetricsIngestion(ctx context.Context) {
+	defer h.jobsWG.Done()
+	if h.metrics != nil {
+		h.metrics.Start(ctx)
+	}
+}
+
+func (h *Handler) runHealthChecks(ctx context.Context) {
+	defer h.jobsWG.Done()
+	if h.healthCheck != nil {
+		h.healthCheck.Start(ctx)
 	}
 }
 
